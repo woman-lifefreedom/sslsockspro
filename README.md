@@ -1,5 +1,7 @@
 ###################
+
 WOMAN LIFE FREEDOM
+
 ###################
 
 # SSLSocks Pro
@@ -28,7 +30,7 @@ connect =
 accept = 127.0.0.1:54321
 ```
 
-Before and after every configuration this dummy configuration is loaded.
+Before loading and after unloading every config profile this dummy configuration is loaded.
 
 ### How to configure stunnel
 Some example configurations are available in the [stunnel documentation](https://www.stunnel.org/static/stunnel.html#EXAMPLES), and more are given below. Many use cases (e.g. tunnelling SSH or SOCKS over HTTPS) require you to run an stunnel server, which you can download from the stunnel website.
