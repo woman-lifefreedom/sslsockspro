@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="link.infra.sslsockspro">
+    <queries>
+        <package android:name="de.blinkt.openvpn" />
+    </queries>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <application
+        android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_descriptor"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity
+            android:name="link.infra.sslsockspro.gui.AdvancedSettingsActivity"
+            android:label="@string/title_activity_advanced_settings"
+            android:parentActivityName="link.infra.sslsockspro.gui.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="link.infra.sslsockspro.gui.main.MainActivity" />
+        </activity>
+        <activity
+            android:name="link.infra.sslsockspro.gui.main.MainActivity"
+            android:exported="true"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.RUN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity>
+        <activity
+            android:name="link.infra.sslsockspro.gui.ServiceShortcutActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name="link.infra.sslsockspro.gui.ServiceStopActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <service android:name="link.infra.sslsockspro.service.ServiceStopReceiver$OpenVPNIntentService" />
+        <service android:name="link.infra.sslsockspro.service.StunnelService" />
+
+        <receiver
+            android:name="link.infra.sslsockspro.service.BootReceiver"
+            android:exported="true"
+            android:label="BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="link.infra.sslsockspro.service.ServiceStopReceiver" />
+        <activity
+            android:name="link.infra.sslsockspro.gui.mngkey.KeyEditActivity"
+            android:label="@string/title_activity_key_edit"
+            android:parentActivityName="link.infra.sslsockspro.gui.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="link.infra.sslsockspro.gui.main.MainActivity" />
+        </activity>
+        <activity
+            android:name="link.infra.sslsockspro.gui.mngprofile.ProfileEditActivity"
+            android:label="@string/title_activity_profile_edit"
+            android:parentActivityName="link.infra.sslsockspro.gui.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="link.infra.sslsockspro.gui.main.MainActivity" />
+        </activity>
+        <activity
+            android:name="link.infra.sslsockspro.gui.ExternalProfileImportActivity"
+            android:parentActivityName="link.infra.sslsockspro.gui.main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="link.infra.sslsockspro.gui.main.MainActivity" />
+            <!--This part is taken from: https://stackoverflow.com/questions/39300649/android-intent-filter-not-working?noredirect=1&lq=1 -->
+            <!--Mime type set -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:scheme="content" />
+
+                <!-- Valid mime types -->
+                <data android:mimeType="application/vnd.google-earth.conf+xml" />
+
+                <!-- Invalid mime types used by some bad software -->
+                <data android:mimeType="application/conf" />
+
+                <data android:mimeType="application/conf+xml" />
+
+                <data android:mimeType="application/vnd.google-earth.conf" />
+
+                <data android:mimeType="text/conf" />
+
+                <data android:mimeType="text/conf+xml" />
+
+                <data android:mimeType="text/xml+conf" />
+
+            </intent-filter>
+
+            <!-- Mime type not set but valid extensions -->
+            <intent-filter>
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:scheme="content" />
+
+                <data android:host="*" />
+
+                <data android:pathPattern="/.*..*..*..*..*\\.conf" />
+                <data android:pathPattern="/.*..*..*..*\\.conf" />
+                <data android:pathPattern="/.*..*..*\\.conf" />
+                <data android:pathPattern="/.*..*\\.conf" />
+                <data android:pathPattern="/.*\\.conf" />
+
+            </intent-filter>
+
+            <!-- Invalid mime type but valid extensions -->
+            <intent-filter>
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="file" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:scheme="content" />
+
+                <data android:host="*" />
+                <data android:mimeType="*/*" />
+
+                <data android:pathPattern="/.*..*..*..*..*\\.conf" />
+                <data android:pathPattern="/.*..*..*..*\\.conf" />
+                <data android:pathPattern="/.*..*..*\\.conf" />
+                <data android:pathPattern="/.*..*\\.conf" />
+                <data android:pathPattern="/.*\\.conf" />
+
+            </intent-filter>
+
+        </activity>
+    </application>
+
+</manifest>

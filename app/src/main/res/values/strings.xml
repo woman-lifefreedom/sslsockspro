@@ -1,0 +1,163 @@
+<!--
+    Copyright (C) 2017-2021 comp500
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+    Additional permission under GNU GPL version 3 section 7:
+    If you modify this Program, or any covered work, by linking or combining
+    it with OpenSSL (or a modified version of that library), containing parts
+    covered by the terms of the OpenSSL License, the licensors of this Program
+    grant you additional permission to convey the resulting work.
+-->
+
+<resources>
+    <string name="app_name">SSLSocks Pro</string>
+    <string name="app_name_full">SSLSocks TLS/SSL tunnel</string>
+
+    <!-- Actions -->
+    <string name="action_settings">Settings</string>
+    <string name="action_add_profile">Add Profile</string>
+    <string name="action_profile_added">Profile Added</string>
+    <string name="action_profile_edited">Profile Edited</string>
+    <string name="action_import_profile">Import Profile</string>
+    <string name="add_key_fab">Add Key</string>
+    <string name="add_profile_fab">Add Key</string>
+
+    <!-- Service notification -->
+    <string name="notification_desc">Tunnel running</string>
+    <string name="notification_channel">Service Notification</string>
+
+    <string-array name="tabs_array">
+        <item>PROFILES</item>
+        <item>LOG</item>
+        <item>CERTS/KEYS</item>
+        <item>ABOUT</item>
+        <!--<item>PROFILES</item>
+        <item>SETTINGS</item>-->
+    </string-array>
+
+    <!-- Main fragment -->
+    <string name="run_status_not_running">Not running</string>
+    <string name="run_status_running">Running</string>
+    <string name="run_status_starting">Starting…</string>
+    <string name="run_status_stopping">Stopping…</string>
+
+    <!-- Log fragment -->
+    <string name="log_blank">stunnel hasn\'t been started yet.</string>
+    <string name="log_verbosity_level">Log level:</string>
+    <string name="clear_log_on_connect">Clear logs on new connection</string>
+    <string name="timestamp_none">None</string>
+    <string name="timestamp_short">Short</string>
+    <string name="timestamp_iso">ISO</string>
+    <string name="copy_logs">Copy logs to clipboard</string>
+    <string name="export_logs">Export logs to file</string>
+    <string name="logs_copied">Logs copied to clipboard</string>
+
+    <!-- Profile fragment -->
+    <string name="title_activity_profile_editor">Profile Editor</string>
+    <string name="title_activity_profile_edit">Edit Profile</string>
+    <string name="title_activity_profile_create">New Profile</string>
+    <string name="no_profiles">You haven\'t added any profiles. Press the button above to add one.</string>
+    <string name="profile_name_ext">File name must end with .conf</string>
+
+    <!-- Certs/Keys fragment -->
+    <string name="import_from_file">Import from file</string>
+    <string name="no_keys">You haven\'t added any keys or certificates. Press the button below to add one, for server or client verification.</string>
+    <string name="title_activity_key_edit">Edit Certificate/Key</string>
+    <string name="title_activity_key_create">New Certificate/Key</string>
+    <string name="file_contents">File contents</string>
+    <string name="file_name">File name</string>
+    <string name="file_delete_failed">Failed to delete file</string>
+    <string name="file_delete_err">Internal file deletion error</string>
+    <string name="file_delete_nexist">File does not exist</string>
+    <string name="file_name_required">File name is required</string>
+    <string name="keyfile_name_ext">File name must end with .pem or .p12</string>
+    <string name="file_name_slashes">File name must not contain forward slashes</string>
+    <string name="file_write_fail">Failed to write file</string>
+    <string name="file_read_fail">Failed to read file</string>
+    <string name="file_save">Save</string>
+    <string name="file_delete">Delete</string>
+
+    <!-- Strings related to Settings -->
+    <string name="title_activity_advanced_settings">Settings</string>
+
+    <string name="pref_header_general">General</string>
+    <string name="pref_title_start_on_boot">Start on boot</string>
+
+    <string name="pref_header_about">About</string>
+    <string name="pref_title_version">Version</string>
+    <string name="pref_title_stunnel_version">Stunnel version</string>
+    <string name="pref_desc_stunnel_version_loading">Loading…</string>
+
+    <string name="pref_header_oss">Open Source Licenses</string>
+    <string name="pref_oss_sslsocks_license">GPLv3-or-later (with OpenSSL linking exception)</string>
+    <string name="pref_oss_stunnel">Stunnel</string>
+    <string name="pref_oss_stunnel_license">GPLv2-or-later (with OpenSSL and LGPL linking exception)</string>
+
+    <!-- Start tunnel shortcut -->
+    <string name="start_service_shortcut_short">Tunnel</string>
+    <string name="start_service_shortcut_long">Start tunnel</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+
+    <!-- Strings related to About fragment -->
+    <string name="comma">,</string>
+    <string name="about_memo_title">Memorial</string>
+    <string name="about_memo_content_zza">
+    WOMAN LIFE FREEDOM
+    </string>
+    <string name="about_memo_content">
+        This Application has been developed to provide internet access to people in Iran. In memory of
+    </string>
+    <string name="about_memo_content_p2">
+        and tens of thousands of others whose dear lives was lost.
+    </string>
+    <string name="about_copyright_title">
+        Copyrights
+    </string>
+    <string name="about_copyright_content">
+        This app is open source and released under GPLv3 license.
+        The design is based on the app SSLSocks which was released under GPLv3 license.
+        Many component of the initial app had to change to support multiple profiles and also comply with play store latest requirements,
+        including porting Stunnel to a library.
+        Stunnel itself is released under GPL license. The OpenSSL library bundled with this app is also licensed under Apache License 2.0.
+        The source code of this app is available at
+    </string>
+
+    <string name="about_privacy_title">Privacy Policy</string>
+    <string name="about_privacy_content">The app SSLSocks Pro does not communicate to any server
+        other than the servers provided in configuration files. The authors do not collect
+        any data and therefore also no data is saved. For the privacy policy for the server/VPN service
+        you are using (or other services related to the project like GitHub), please refer to their
+        respective privacy policy.</string>
+    <string name="about_us_title">About Us</string>
+    <string name="about_us_content">This App is developed by a group of volunteers to facilitate internet access to people in Iran.
+    Developers of this app do not receive any funding from any governmental or non-governmental organization or political parties
+        and stand away from special interest groups.
+    </string>
+
+</resources>

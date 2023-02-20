@@ -1,0 +1,152 @@
+<resources>
+    <string name="app_name">اس‌اس‌ال ساکس</string>
+    <string name="app_name_full">SSLSocks TLS/SSL tunnel</string>
+
+    <!-- Actions -->
+    <string name="action_settings">تنظیمات</string>
+    <string name="action_add_profile">اضافه کردن پروفایل</string>
+    <string name="action_profile_added">پروفایل جدید اضافه شد</string>
+    <string name="action_profile_edited">تغییرات پروفایل ثبت شد</string>
+    <string name="action_import_profile">اضافه کردن پروفایل از روی فایل</string>
+    <string name="add_key_fab">اضافه کردن کلید</string>
+    <string name="add_profile_fab">اضافه کردن پروفایل</string>
+
+
+    <!-- Service notification -->
+    <string name="notification_desc">تونل در حال اجراست</string>
+    <string name="notification_channel">Service Notification</string>
+
+    <string-array name="tabs_array">
+        <item>پروفایل\u200cها</item>
+        <item>گزارش\u200cها</item>
+        <item>کلیدها</item>
+        <item>درباره</item>
+        <!--<item>PROFILES</item>
+        <item>SETTINGS</item>-->
+    </string-array>
+
+    <!-- Main fragment -->
+    <string name="run_status_not_running">توقف کامل</string>
+    <string name="run_status_running">تونل تنظیم شد</string>
+    <string name="run_status_starting">تونل در حال شروع است …</string>
+    <string name="run_status_stopping"> تونل در حال توقف است …</string>
+
+    <!-- Log fragment -->
+    <string name="log_blank">تونل هنوز شروع به کار نکرده است</string>
+    <string name="log_verbosity_level">سطح گزارش\u200cها:</string>
+    <string name="clear_log_on_connect">پس از اتصال گزارشهای قبلی پاک شود.</string>
+    <string name="timestamp_none">بدون زمان</string>
+    <string name="timestamp_short">ساعت</string>
+    <string name="timestamp_iso">تاریخ و ساعت</string>
+    <string name="copy_logs">اضافه کردن گزارشها به حافظه</string>
+    <string name="export_logs">ثبت گزارشها بر روی فایل</string>
+    <string name="logs_copied">گزارشها بر روی حافظه ذخیره شدند</string>
+
+    <!-- Profile fragment -->
+    <string name="title_activity_profile_editor">ویرایشگر پروفایل</string>
+    <string name="title_activity_profile_edit">ویرایش پروفایل</string>
+    <string name="title_activity_profile_create">پروفایل جدید</string>
+    <string name="no_profiles">در حال حاضر شما هیچ پروفایلی ثبت نکرده اید.</string>
+    <string name="profile_name_ext">نام فایل باید دارای پسوند .conf باشد</string>
+
+    <!-- Certs/Keys fragment -->
+    <string name="import_from_file">Import from file</string>
+    <string name="no_keys">در حال حاضر شما هیچ کلیدی ثبت نکرده\u200cاید</string>
+    <string name="title_activity_key_edit">Edit Certificate/Key</string>
+    <string name="title_activity_key_create">New Certificate/Key</string>
+    <string name="file_contents">File contents</string>
+    <string name="file_name">File name</string>
+    <string name="file_delete_failed">Failed to delete file</string>
+    <string name="file_delete_err">Internal file deletion error</string>
+    <string name="file_delete_nexist">File does not exist</string>
+    <string name="file_name_required">File name is required</string>
+    <string name="keyfile_name_ext">File name must end with .pem or .p12</string>
+    <string name="file_name_slashes">File name must not contain forward slashes</string>
+    <string name="file_write_fail">Failed to write file</string>
+    <string name="file_read_fail">Failed to read file</string>
+    <string name="file_save">Save</string>
+    <string name="file_delete">Delete</string>
+
+    <!-- Strings related to Settings -->
+    <string name="title_activity_advanced_settings">تنظیمات</string>
+
+    <string name="pref_header_general">تنظیمات عمومی</string>
+    <string name="pref_title_start_on_boot">اجرای خودکار</string>
+
+    <string name="pref_header_about">درباره</string>
+    <string name="pref_title_version">نسخه\u200cی نرم افزار</string>
+    <string name="pref_title_stunnel_version">نسخه\u200Cی Stunnel </string>
+    <string name="pref_desc_stunnel_version_loading">Loading…</string>
+
+    <string name="pref_header_oss">Open Source Licenses</string>
+    <string name="pref_oss_sslsocks_license">GPLv3-or-later (with OpenSSL linking exception)</string>
+    <string name="pref_oss_stunnel">Stunnel</string>
+    <string name="pref_oss_stunnel_license">GPLv2-or-later (with OpenSSL and LGPL linking exception)</string>
+
+    <!-- Start tunnel shortcut -->
+    <string name="start_service_shortcut_short">تونل</string>
+    <string name="start_service_shortcut_long">شروع تونل</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+
+    <!-- Strings related to About fragment -->
+    <string name="comma">،</string>
+    <string name="about_memo_title">یادبود</string>
+    <string name="about_memo_content_zza">
+        زن زندگی آزادی
+    </string>
+    <string name="about_memo_content">
+        این نرم‌افزار با هدف دسترسی آسانتر مردم ایران به اینترنت طراحی شده است. به یاد
+    </string>
+    <string name="about_memo_content_p2">
+        و ده‌ها هزار نفری که جان عزیزشان از دست رفت.
+    </string>
+    <string name="about_copyright_title">
+        حقوق مولف
+    </string>
+    <string name="about_copyright_content">
+        این نرم‌افزار به صورت متن‌باز تحت لایسنس
+        GPLv3
+        نوشته شده است.
+        طراحی اولیه‌ی این نرم افزار براساس اپ
+        SSLSocks
+        بوده که تحت لایسنش
+        GPLv3
+        منتشر شده است، اما بخش‌های زیادی از کد اولیه برای
+        پشتبانی از چند پروفایل و تطبیق با سیاست‌های فروشگاه گوگل‌پلی تغییر کرده‌اند،
+        منجمله تبدیل فایل اجرایی
+        Stunnel
+         به کتابخانه. نرم‌افزار
+        Stunnel
+        تحت لایسنس
+        GPL
+        منشتر شده است. نرم‌افزار
+        OpenSSL
+        که در کتابخانه‌ی این اپلیکیشن مورد استفاده قرار گرفته است نیز تحت لایسننس
+        Apache License V2
+        منتشر شده است.
+        متن این اپلیکیشن از لینک زیر در وبسایت گیت‌هاب در دسترس است.
+    </string>
+    <string name="about_privacy_title">حریم خصوصی</string>
+    <string name="about_privacy_content">نرم‌افزار اس‌اس‌ال‌ساکس با هیچ سروری جز سروری که در فایل تنظیمات شما داده شده ارتباط برفرار نمی‌کند. طراحان این نرم‌افزار هیچ داده‌ای از شما ذخیره نمی‌کنند.
+    برای اطلاع از سیاست حریم خصوصی سرورهایی که از آنها سرویس دریافت می‌کنید به صفحه‌ی ارائه‌دهندگان سرویس مراجعه کنید.
+    </string>
+    <string name="about_us_title">درباره‌ی ما</string>
+    <string name="about_us_content">
+        این نرم‌افزار توسط گروهی داوطلب برای دسترسی آسانتر مردم ایران به اینترنت طراحی شده است. طراحان این نرم‌افزار از هیچ دولت یا حزب سیاسی یا بنیادی کمک مالی دریافت نمی‌کنند
+         و از گرو‌هایی با منافع خاص فاصله می‌گیرند.
+    </string>
+</resources>

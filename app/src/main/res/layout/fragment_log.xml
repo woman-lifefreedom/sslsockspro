@@ -1,0 +1,130 @@
+<!--
+    Copyright (C) 2017-2021 comp500
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+    Additional permission under GNU GPL version 3 section 7:
+    If you modify this Program, or any covered work, by linking or combining
+    it with OpenSSL (or a modified version of that library), containing parts
+    covered by the terms of the OpenSSL License, the licensors of this Program
+    grant you additional permission to convey the resulting work.
+-->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/fragment_log"
+    tools:context="link.infra.sslsockspro.gui.mnglog.LogFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="4dp"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:orientation="vertical"
+                tools:visibility="visible"
+                android:layout_width="wrap_content"
+                android:padding="4dp"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/log_verbosity_level"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="5dp"
+                        android:paddingStart="5dp"
+                        android:id="@+id/log_level_tv"
+                        android:text="@string/log_verbosity_level"/>
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/log_level_seekbar"
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:max="4"
+                    android:stepSize="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <RadioGroup
+                    android:id="@+id/timeFormatRadioGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/timestamp_none"
+                        android:id="@+id/radioNone"
+                        />
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/timestamp_short"
+                        android:id="@+id/radioShort"
+                        />
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/timestamp_iso"
+                        android:id="@+id/radioISO"
+                        />
+                </RadioGroup>
+
+                <CheckBox
+                    tools:checked="true"
+                    android:id="@+id/clear_logs_connect"
+                    android:text="@string/clear_log_on_connect"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:fillViewport="true">
+
+            <TextView
+                android:id="@+id/logtext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars = "vertical"
+                android:text="@string/log_blank"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"/>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+
+
+</FrameLayout>
