@@ -383,6 +383,7 @@ public class StunnelService extends Service {
 						.setContentText(getString(R.string.notification_desc))
 						.setCategory(NotificationCompat.CATEGORY_SERVICE)
 						.setPriority(NotificationCompat.PRIORITY_DEFAULT)
+						.setSilent(true)
 						.setOngoing(true);
 		// Creates an explicit intent for an Activity in your app
 		Intent resultIntent = new Intent(this, MainActivity.class);

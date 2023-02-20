@@ -96,7 +96,7 @@ public class AboutFragment extends Fragment {
 		comma = getResources().getString(R.string.comma);
 		String zza = getResources().getString(R.string.about_memo_content_zza);
 		htmlZza = "<p><span style=\"color:#8e44ad\"><em><strong><span style=\"font-size:16px\">" + zza + "</span></strong></em></span></p>";
-		String javidnam = getResources().getString(R.string.javidnam2);
+		String javidnam = getResources().getString(R.string.javidnam);
 		javidnam_array = javidnam.split(",");
 		Collections.shuffle(Arrays.asList(javidnam_array));
 		String source_code = getResources().getString(R.string.source_code);
