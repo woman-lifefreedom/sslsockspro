@@ -4,3 +4,6 @@
 [submodule "app/src/cpp/openssl"]
 	path = app/src/cpp/openssl
 	url = git@github.com:woman-lifefreedom/platform_external_openssl.git
+[submodule "app/src/cpp/openssl--force"]
+	path = app/src/cpp/openssl--force
+	url = git@github.com:woman-lifefreedom/platform_external_openssl.git
