@@ -21,7 +21,41 @@ android {
         versionName = "1.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        externalNativeBuild {
+            cmake {
+                targets += listOf("stunnel")
+            }
+        }
+        ndk {
+            // Specifies the ABI configurations of your native
+            // libraries Gradle should build and package with your app.
+            abiFilters += listOf("arm64-v8a")
+        }
     }
+
+//    productFlavors {
+//        create("full") {
+//            externalNativeBuild {
+//                cmake {
+//                    // Specifies which native libraries or executables to build and package
+//                    // for this product flavor. The following tells Gradle to build only the
+//                    // "native-lib-demo" and "my-executible-demo" outputs from the linked
+//                    // CMake project. If you don't configure this property, Gradle builds all
+//                    // executables and shared object libraries that you define in your CMake
+//                    // (or ndk-build) project. However, by default, Gradle packages only the
+//                    // shared libraries in your app.
+//                    targets += listOf("stunnel")
+//                }
+//            }
+//        }
+//    }
+
+    externalNativeBuild {
+        cmake {
+            path = File("${projectDir}/src/cpp/CMakeLists.txt")
+        }
+    }
+
 //    sourceSets {
 //        main {
 //            jniLibs.srcDirs = ["src/main/jni"]
@@ -29,14 +63,14 @@ android {
 //    }
 //
 
-        signingConfigs {
-            create("release") {
-                storeFile = file(gradleLocalProperties(rootDir).getProperty("storeFile"))
-                storePassword = gradleLocalProperties(rootDir).getProperty("storePassword")
-                keyAlias = gradleLocalProperties(rootDir).getProperty("keyAlias")
-                keyPassword = gradleLocalProperties(rootDir).getProperty("keyPassword")
-            }
+    signingConfigs {
+        create("release") {
+            storeFile = file(gradleLocalProperties(rootDir).getProperty("storeFile"))
+            storePassword = gradleLocalProperties(rootDir).getProperty("storePassword")
+            keyAlias = gradleLocalProperties(rootDir).getProperty("keyAlias")
+            keyPassword = gradleLocalProperties(rootDir).getProperty("keyPassword")
         }
+    }
 
     buildTypes {
         getByName("release") {

@@ -1,3 +1,6 @@
 [submodule "app/src/cpp/stunnel-android"]
 	path = app/src/cpp/stunnel-android
 	url = git@github.com:woman-lifefreedom/stunnel-android.git
+[submodule "app/src/cpp/openssl"]
+	path = app/src/cpp/openssl
+	url = git@github.com:woman-lifefreedom/platform_external_openssl.git
