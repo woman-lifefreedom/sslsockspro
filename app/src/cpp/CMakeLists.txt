@@ -44,6 +44,9 @@ ExternalProject_Add(stunnel_ext
         --host ${target_autotools} 
     BUILD_COMMAND ${MAKE} 
     PREFIX "stunnel"
+    ## this is a workaround for ninja that looks for the file before build process begins
+    ## https://gitlab.kitware.com/cmake/cmake/-/issues/23056
+    BUILD_BYPRODUCTS libstunnel_ar.a
     INSTALL_COMMAND cmake -E echo "moving the built libraries to build folder" 
     && mkdir -p ${CMAKE_CURRENT_BINARY_DIR}${stunnel_install}/lib
     && cp ${CMAKE_CURRENT_BINARY_DIR}${stunnel_libfolder}/libstunnel.a
