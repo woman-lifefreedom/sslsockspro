@@ -10,3 +10,9 @@
 [submodule "app/src/cpp/openssl"]
 	path = app/src/cpp/openssl
 	url = git@github.com:woman-lifefreedom/platform_external_openssl.git
+[submodule "app/src/cpp/lzo"]
+	path = app/src/cpp/lzo
+	url = git@github.com:woman-lifefreedom/lzo.git
+[submodule "app/src/cpp/openvpn3"]
+	path = app/src/cpp/openvpn3
+	url = git@github.com:woman-lifefreedom/openvpn3.git
