@@ -2,7 +2,11 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/app/src/cpp/asio" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/app/src/cpp/lz4" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/app/src/cpp/lzo" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/src/cpp/openssl" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/app/src/cpp/openvpn3" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/src/cpp/stunnel-android" vcs="Git" />
   </component>
 </project>

@@ -23,7 +23,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         externalNativeBuild {
             cmake {
-                targets += listOf("stunnel")
+                targets += listOf("stunnel","ovpn3")
             }
         }
         ndk {
@@ -55,6 +55,8 @@ android {
             path = File("${projectDir}/src/cpp/CMakeLists.txt")
         }
     }
+
+    sourceSets["main"].java.srcDirs("$buildDir/generated/source/ovpn3swig")
 
 //    sourceSets {
 //        main {
@@ -93,7 +95,42 @@ android {
     }
     ndkVersion = "25.1.8937393"
     buildToolsVersion = "33.0.1"
+
 }
+
+
+var swigcmd = "swig"
+
+fun registerGenTask(variantName: String, variantDirName: String): File {
+    val baseDir = File(buildDir, "generated/source/ovpn3swig")
+    val genDir = File(baseDir, "net/openvpn/ovpn3")
+
+    tasks.register<Exec>("generateOpenVPN3Swig${variantName}")
+    {
+
+        doFirst {
+            mkdir(genDir)
+        }
+        commandLine(listOf(swigcmd, "-outdir", genDir, "-outcurrentdir", "-c++", "-java", "-package", "net.openvpn.ovpn3",
+            "-Isrc/cpp/openvpn3/client", "-Isrc/cpp/openvpn3/",
+            "-DOPENVPN_PLATFORM_ANDROID",
+            "-o", "${genDir}/ovpncli_wrap.cxx", "-oh", "${genDir}/ovpncli_wrap.h",
+            "src/cpp/openvpn3/client/ovpncli.i"))
+        inputs.files( "src/cpp/openvpn3/client/ovpncli.i")
+        outputs.dir( genDir)
+
+    }
+    return baseDir
+}
+
+android.applicationVariants.all(object : Action<com.android.build.gradle.api.ApplicationVariant> {
+    override fun execute(variant: com.android.build.gradle.api.ApplicationVariant) {
+        val sourceDir = registerGenTask(variant.name, variant.baseName.replace("-", "/"))
+        val task = tasks.named("generateOpenVPN3Swig${variant.name}").get()
+
+        variant.registerJavaGeneratingTask(task, sourceDir)
+    }
+})
 
 repositories {
     mavenCentral()
