@@ -1,18 +1,18 @@
 [submodule "app/src/cpp/stunnel-android"]
-	path = app/src/cpp/stunnel-android
+	path = app/src/main/cpp/stunnel-android
 	url = git@github.com:woman-lifefreedom/stunnel-android.git
 [submodule "app/src/cpp/asio"]
-	path = app/src/cpp/asio
+	path = app/src/main/cpp/asio
 	url = git@github.com:woman-lifefreedom/asio.git
 [submodule "app/src/cpp/lz4"]
-	path = app/src/cpp/lz4
+	path = app/src/main/cpp/lz4
 	url = git@github.com:woman-lifefreedom/lz4.git
 [submodule "app/src/cpp/openssl"]
-	path = app/src/cpp/openssl
+	path = app/src/main/cpp/openssl
 	url = git@github.com:woman-lifefreedom/platform_external_openssl.git
 [submodule "app/src/cpp/lzo"]
-	path = app/src/cpp/lzo
+	path = app/src/main/cpp/lzo
 	url = git@github.com:woman-lifefreedom/lzo.git
 [submodule "app/src/cpp/openvpn3"]
-	path = app/src/cpp/openvpn3
+	path = app/src/main/cpp/openvpn3
 	url = git@github.com:woman-lifefreedom/openvpn3.git

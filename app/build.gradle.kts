@@ -52,19 +52,12 @@ android {
 
     externalNativeBuild {
         cmake {
-            path = File("${projectDir}/src/cpp/CMakeLists.txt")
+            path = File("${projectDir}/src/main/cpp/CMakeLists.txt")
         }
     }
 
-    sourceSets["main"].java.srcDirs("$buildDir/generated/source/ovpn3swig")
-
-//    sourceSets {
-//        main {
-//            jniLibs.srcDirs = ["src/main/jni"]
-//        }
-//    }
-//
-
+//    sourceSets["main"].java.srcDirs("$buildDir/generated/source/ovpn3swig")
+    
     signingConfigs {
         create("release") {
             storeFile = file(gradleLocalProperties(rootDir).getProperty("storeFile"))
@@ -112,11 +105,11 @@ fun registerGenTask(variantName: String, variantDirName: String): File {
             mkdir(genDir)
         }
         commandLine(listOf(swigcmd, "-outdir", genDir, "-outcurrentdir", "-c++", "-java", "-package", "net.openvpn.ovpn3",
-            "-Isrc/cpp/openvpn3/client", "-Isrc/cpp/openvpn3/",
+            "-Isrc/main/cpp/openvpn3/client", "-Isrc/main/cpp/openvpn3/",
             "-DOPENVPN_PLATFORM_ANDROID",
             "-o", "${genDir}/ovpncli_wrap.cxx", "-oh", "${genDir}/ovpncli_wrap.h",
-            "src/cpp/openvpn3/client/ovpncli.i"))
-        inputs.files( "src/cpp/openvpn3/client/ovpncli.i")
+            "src/main/cpp/openvpn3/client/ovpncli.i"))
+        inputs.files( "src/main/cpp/openvpn3/client/ovpncli.i")
         outputs.dir( genDir)
 
     }
