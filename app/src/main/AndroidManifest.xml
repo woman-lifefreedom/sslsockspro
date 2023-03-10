@@ -20,16 +20,16 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name="link.infra.sslsockspro.gui.AdvancedSettingsActivity"
+            android:name="link.infra.sslsockspro.gui.activities.AdvancedSettingsActivity"
             android:label="@string/title_activity_advanced_settings"
-            android:parentActivityName="link.infra.sslsockspro.gui.main.MainActivity"
+            android:parentActivityName="link.infra.sslsockspro.gui.activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="link.infra.sslsockspro.gui.main.MainActivity" />
+                android:value="link.infra.sslsockspro.gui.activities.MainActivity" />
         </activity>
         <activity
-            android:name="link.infra.sslsockspro.gui.main.MainActivity"
+            android:name="link.infra.sslsockspro.gui.activities.MainActivity"
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -65,31 +65,31 @@
         </receiver>
         <receiver android:name="link.infra.sslsockspro.service.ServiceStopReceiver" />
         <activity
-            android:name="link.infra.sslsockspro.gui.mngkey.KeyEditActivity"
+            android:name="link.infra.sslsockspro.gui.fragments.KeyEditActivity"
             android:label="@string/title_activity_key_edit"
-            android:parentActivityName="link.infra.sslsockspro.gui.main.MainActivity"
+            android:parentActivityName="link.infra.sslsockspro.gui.activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="link.infra.sslsockspro.gui.main.MainActivity" />
+                android:value="link.infra.sslsockspro.gui.activities.MainActivity" />
         </activity>
         <activity
-            android:name="link.infra.sslsockspro.gui.mngprofile.ProfileEditActivity"
+            android:name="link.infra.sslsockspro.gui.fragments.ProfileEditActivity"
             android:label="@string/title_activity_profile_edit"
-            android:parentActivityName="link.infra.sslsockspro.gui.main.MainActivity"
+            android:parentActivityName="link.infra.sslsockspro.gui.activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="link.infra.sslsockspro.gui.main.MainActivity" />
+                android:value="link.infra.sslsockspro.gui.activities.MainActivity" />
         </activity>
         <activity
-            android:name="link.infra.sslsockspro.gui.ExternalProfileImportActivity"
-            android:parentActivityName="link.infra.sslsockspro.gui.main.MainActivity"
+            android:name="link.infra.sslsockspro.gui.activities.ExternalProfileImportActivity"
+            android:parentActivityName="link.infra.sslsockspro.gui.activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="link.infra.sslsockspro.gui.main.MainActivity" />
+                android:value="link.infra.sslsockspro.gui.activities.MainActivity" />
             <!--This part is taken from: https://stackoverflow.com/questions/39300649/android-intent-filter-not-working?noredirect=1&lq=1 -->
             <!--Mime type set -->
             <intent-filter>

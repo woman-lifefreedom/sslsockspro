@@ -1,4 +1,4 @@
-package link.infra.sslsockspro.gui.mngabout;
+package link.infra.sslsockspro.gui.fragments;
 
 import android.content.Context;
 import android.text.Spanned;
@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import link.infra.sslsockspro.R;

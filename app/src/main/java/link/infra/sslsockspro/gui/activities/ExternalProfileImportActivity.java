@@ -1,4 +1,4 @@
-package link.infra.sslsockspro.gui;
+package link.infra.sslsockspro.gui.activities;
 
 import static link.infra.sslsockspro.Constants.EXT_CONF;
 import static link.infra.sslsockspro.Constants.PROFILES_DIR;
@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import link.infra.sslsockspro.R;
-import link.infra.sslsockspro.gui.main.MainActivity;
 import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;

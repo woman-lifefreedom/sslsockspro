@@ -23,8 +23,6 @@
 
 package link.infra.sslsockspro.service;
 
-import static java.lang.Boolean.TRUE;
-
 import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -32,9 +30,9 @@ import android.content.Intent;
 
 import androidx.annotation.Nullable;
 
-import link.infra.sslsockspro.ProfileDB;
+import link.infra.sslsockspro.database.ProfileDB;
 import link.infra.sslsockspro.gui.OpenVPNIntegrationHandler;
-import link.infra.sslsockspro.gui.main.MainActivity;
+import link.infra.sslsockspro.gui.activities.MainActivity;
 
 public class ServiceStopReceiver extends BroadcastReceiver {
 	@Override

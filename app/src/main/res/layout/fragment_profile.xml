@@ -28,7 +28,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="link.infra.sslsockspro.gui.mngprofile.ProfileFragment">
+    tools:context="link.infra.sslsockspro.gui.fragments.ProfileFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,7 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:layoutManager="LinearLayoutManager"
-                    tools:context=".gui.main.ConfigRecyclerView"
+                    tools:context=".gui.activities.ConfigRecyclerView"
                     tools:listitem="@layout/profile_item"
                     />
                 <TextView

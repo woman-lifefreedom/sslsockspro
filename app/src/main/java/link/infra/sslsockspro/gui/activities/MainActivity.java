@@ -21,7 +21,7 @@
  * grant you additional permission to convey the resulting work.
  */
 
-package link.infra.sslsockspro.gui.main;
+package link.infra.sslsockspro.gui.activities;
 
 import static link.infra.sslsockspro.Constants.APP_LOG;
 import static link.infra.sslsockspro.Constants.EXT_CONF;
@@ -32,7 +32,7 @@ import static link.infra.sslsockspro.Constants.LOG_NONE;
 import static link.infra.sslsockspro.Constants.LOG_SHORT;
 import static link.infra.sslsockspro.Constants.PROFILES_DIR;
 import static link.infra.sslsockspro.Constants.SERVICE_DIR;
-import static link.infra.sslsockspro.gui.mngkey.KeyEditActivity.ARG_EXISTING_FILE_NAME;
+import static link.infra.sslsockspro.gui.fragments.KeyEditActivity.ARG_EXISTING_FILE_NAME;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -74,24 +74,22 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
-import link.infra.sslsockspro.ProfileDB;
+import link.infra.sslsockspro.database.ProfileDB;
 import link.infra.sslsockspro.R;
-import link.infra.sslsockspro.gui.AdvancedSettingsActivity;
 import link.infra.sslsockspro.gui.OpenVPNIntegrationHandler;
-import link.infra.sslsockspro.gui.mngkey.KeyEditActivity;
-import link.infra.sslsockspro.gui.mngkey.KeyFragment;
-import link.infra.sslsockspro.gui.mngkey.KeyRecyclerViewAdapter;
-import link.infra.sslsockspro.gui.mngabout.AboutFragment;
-import link.infra.sslsockspro.gui.mnglog.LogFragment;
-import link.infra.sslsockspro.gui.mngprofile.ProfileEditActivity;
-import link.infra.sslsockspro.gui.mngprofile.ProfileFragment;
+import link.infra.sslsockspro.gui.fragments.KeyEditActivity;
+import link.infra.sslsockspro.gui.fragments.KeyFragment;
+import link.infra.sslsockspro.gui.fragments.KeyRecyclerViewAdapter;
+import link.infra.sslsockspro.gui.fragments.AboutFragment;
+import link.infra.sslsockspro.gui.fragments.LogFragment;
+import link.infra.sslsockspro.gui.fragments.ProfileEditActivity;
+import link.infra.sslsockspro.gui.fragments.ProfileFragment;
 import link.infra.sslsockspro.service.StunnelService;
 import okio.BufferedSink;
 import okio.BufferedSource;
@@ -582,16 +580,6 @@ public class MainActivity extends AppCompatActivity
 				Log.e(TAG, "Log file creation error", e);
 			}
 		}
-//		else {
-//			PrintWriter writer = null;
-//			try {
-//				writer = new PrintWriter(log);
-//				writer.print("");
-//				writer.close();
-//			} catch (FileNotFoundException e) {
-//				Log.e(TAG, "Failed to clear previous logs", e);
-//			}
-//		}
 		return (sd && pd && lf);
 	}
 

@@ -21,7 +21,7 @@
  * grant you additional permission to convey the resulting work.
  */
 
-package link.infra.sslsockspro.gui;
+package link.infra.sslsockspro.gui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,7 +34,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
@@ -42,7 +41,7 @@ import java.util.Objects;
 
 import link.infra.sslsockspro.BuildConfig;
 import link.infra.sslsockspro.R;
-import link.infra.sslsockspro.gui.main.MainActivity;
+import link.infra.sslsockspro.gui.activities.MainActivity;
 
 public class AdvancedSettingsActivity extends AppCompatActivity {
 

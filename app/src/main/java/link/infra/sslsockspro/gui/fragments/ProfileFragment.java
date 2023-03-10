@@ -21,7 +21,7 @@
  * grant you additional permission to convey the resulting work.
  */
 
-package link.infra.sslsockspro.gui.mngprofile;
+package link.infra.sslsockspro.gui.fragments;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -49,8 +49,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -58,9 +56,9 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import link.infra.sslsockspro.ProfileDB;
+import link.infra.sslsockspro.database.ProfileDB;
 import link.infra.sslsockspro.R;
-import link.infra.sslsockspro.gui.main.MainActivity;
+import link.infra.sslsockspro.gui.activities.MainActivity;
 import link.infra.sslsockspro.service.StunnelService;
 import okio.BufferedSource;
 import okio.Okio;

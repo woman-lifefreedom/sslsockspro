@@ -21,7 +21,7 @@
  * grant you additional permission to convey the resulting work.
  */
 
-package link.infra.sslsockspro.gui.mngprofile;
+package link.infra.sslsockspro.gui.fragments;
 
 import static link.infra.sslsockspro.Constants.EXT_CONF;
 import static link.infra.sslsockspro.Constants.PROFILES_DIR;

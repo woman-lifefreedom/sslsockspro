@@ -1,4 +1,4 @@
-package link.infra.sslsockspro.gui.mngabout;
+package link.infra.sslsockspro.gui.fragments;
 
 import android.text.Spanned;
 

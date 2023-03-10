@@ -21,12 +21,10 @@
  * grant you additional permission to convey the resulting work.
  */
 
-package link.infra.sslsockspro.gui.mnglog;
+package link.infra.sslsockspro.gui.fragments;
 
-import static link.infra.sslsockspro.Constants.LOG_ISO;
 import static link.infra.sslsockspro.Constants.LOG_LEVEL_DEFAULT;
 import static link.infra.sslsockspro.Constants.LOG_LEVEL_OFFSET;
-import static link.infra.sslsockspro.Constants.LOG_NONE;
 import static link.infra.sslsockspro.Constants.LOG_SHORT;
 
 import android.app.Activity;
@@ -46,11 +44,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import link.infra.sslsockspro.R;
-import link.infra.sslsockspro.gui.main.MainActivity;
+import link.infra.sslsockspro.gui.activities.MainActivity;
 import link.infra.sslsockspro.service.StunnelService;
 
 

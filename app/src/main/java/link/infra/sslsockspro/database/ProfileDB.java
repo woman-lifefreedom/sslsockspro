@@ -1,6 +1,5 @@
-package link.infra.sslsockspro;
+package link.infra.sslsockspro.database;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +16,13 @@ public class ProfileDB {
     private static final List<Boolean> runOvpns = new ArrayList<Boolean>();
     private static int position = -1; // -1 means no position by default
     private static int lastSelectedPosition;
+
+    private static final List<ProfileItem> mItems = new ArrayList<>();
+
+    class ProfileItem {
+        String configFileName;
+        StunnelConfig config;
+    }
 
     /**
      * Private Constructor
@@ -49,7 +55,6 @@ public class ProfileDB {
         }
         return remarks;
     }
-
 
     public static List<String> getServers(){
         if(profileManagement==null){

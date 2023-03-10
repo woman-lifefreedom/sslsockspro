@@ -21,7 +21,7 @@
  * grant you additional permission to convey the resulting work.
  */
 
-package link.infra.sslsockspro.gui.mngprofile;
+package link.infra.sslsockspro.gui.fragments;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,9 +33,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import link.infra.sslsockspro.ProfileDB;
+import link.infra.sslsockspro.database.ProfileDB;
 import link.infra.sslsockspro.R;
-import link.infra.sslsockspro.gui.main.MainActivity;
 
 public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecyclerViewAdapter.ViewHolder> {
 

@@ -29,7 +29,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import link.infra.sslsockspro.ProfileDB;
+import link.infra.sslsockspro.database.ProfileDB;
 import link.infra.sslsockspro.service.StunnelService;
 
 public class ServiceShortcutActivity extends Activity {

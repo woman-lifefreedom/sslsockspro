@@ -35,7 +35,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context=".gui.main.KeyFragment"
+        tools:context=".gui.activities.KeyFragment"
         tools:listitem="@layout/key_item"/>
 
     <TextView

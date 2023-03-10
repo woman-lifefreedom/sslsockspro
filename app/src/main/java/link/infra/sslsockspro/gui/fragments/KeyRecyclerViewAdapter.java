@@ -21,7 +21,7 @@
  * grant you additional permission to convey the resulting work.
  */
 
-package link.infra.sslsockspro.gui.mngkey;
+package link.infra.sslsockspro.gui.fragments;
 
 import android.view.LayoutInflater;
 import android.view.View;

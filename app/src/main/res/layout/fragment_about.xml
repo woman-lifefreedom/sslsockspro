@@ -26,7 +26,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/fragment_log"
-    tools:context="link.infra.sslsockspro.gui.mngabout.AboutFragment">
+    tools:context="link.infra.sslsockspro.gui.fragments.AboutFragment">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
