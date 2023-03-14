@@ -25,6 +25,7 @@ package link.infra.sslsockspro.gui.activities;
 
 import static link.infra.sslsockspro.Constants.APP_LOG;
 import static link.infra.sslsockspro.Constants.EXT_CONF;
+import static link.infra.sslsockspro.Constants.EXT_XML;
 import static link.infra.sslsockspro.Constants.LAST_SELECTED_PROFILE;
 import static link.infra.sslsockspro.Constants.LOG_ISO;
 import static link.infra.sslsockspro.Constants.LOG_LEVEL_DEFAULT;
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity
 	private static boolean autoConnectFlag = false;
 
 	// for importing profile
-	private String fileContents;
+	//private String fileContents;
 
 
 	@Override
@@ -529,7 +530,6 @@ public class MainActivity extends AppCompatActivity
 				if (fileData != null) {
 					InputStream inputStream;
 					try {
-						// TODO: this doesn't seem to work on Android 4.4.x, for some reason
 						inputStream = getContentResolver().openInputStream(fileData);
 						if (inputStream == null) { // Just to keep the linter happy that I'm doing null checks
 							throw new FileNotFoundException();
@@ -539,6 +539,7 @@ public class MainActivity extends AppCompatActivity
 						Toast.makeText(this, R.string.file_read_fail, Toast.LENGTH_SHORT).show();
 						return;
 					}
+					String fileContents;
 					try (BufferedSource in = Okio.buffer(Okio.source(inputStream))) {
 						fileContents = in.readUtf8();
 					} catch (IOException e) {
@@ -547,16 +548,33 @@ public class MainActivity extends AppCompatActivity
 						return;
 					}
 					String fileName = getFileName(fileData);
-					if (!fileName.endsWith(EXT_CONF) ) {
+					if ( !fileName.endsWith(EXT_CONF) ) {
 						Toast.makeText(this, R.string.profile_name_ext, Toast.LENGTH_SHORT).show();
 						return;
 					}
-					saveFile();
+					if (ProfileDB.parseProfile(fileContents)) {
+						try {
+							ProfileDB.saveProfile(fileContents, getApplicationContext());
+						} catch (IOException e) {
+							Log.e(TAG, "Failed sslsockspro profile writing.", e);
+							Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
+							return;
+						}
+					} else {
+						Log.e(TAG, "file content is wrong");
+						//Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
+						return;
+					}
+					Toast.makeText(this, R.string.action_profile_added, Toast.LENGTH_SHORT).show();
 					profilesFragment.get().profileUpdateList(getApplicationContext());
 				}
 			}
 		}
 	});
+
+	public Context getContext() {
+		return getApplicationContext();
+	}
 
 
 	boolean setupServiceDir(Context context) {
@@ -603,18 +621,18 @@ public class MainActivity extends AppCompatActivity
 		return result;
 	}
 
-	private void saveFile() {
-		String fileName = UUID.randomUUID().toString();
-		File fileConf = new File(getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName + EXT_CONF);
-		try (BufferedSink out = Okio.buffer(Okio.sink(fileConf))) {
-			out.writeUtf8(fileContents);
-			out.close();
-			setResult(RESULT_OK);
-		} catch (IOException e) {
-			Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
-			Log.e(TAG, "Failed stunnel .conf file writing: ", e);
-		}
-		Toast.makeText(this, R.string.action_profile_added, Toast.LENGTH_SHORT).show();
-	}
+//	private void saveFile() {
+//		String fileName = UUID.randomUUID().toString();
+//		File fileConf = new File(getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName + EXT_CONF);
+//		try (BufferedSink out = Okio.buffer(Okio.sink(fileConf))) {
+//			out.writeUtf8(fileContents);
+//			out.close();
+//			setResult(RESULT_OK);
+//		} catch (IOException e) {
+//			Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
+//			Log.e(TAG, "Failed stunnel .conf file writing: ", e);
+//		}
+//		Toast.makeText(this, R.string.action_profile_added, Toast.LENGTH_SHORT).show();
+//	}
 
 }

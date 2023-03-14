@@ -27,9 +27,11 @@ public class Constants {
 	public static final String PSKSECRETS = "psksecrets.txt";
 	public static final String PID = "pid";
 	public static final String EXT_CONF = ".conf";
+	public static final String EXT_XML = ".xml";
 	public static final String SERVICE_DIR = "stunnel_service";
 	public static final String PROFILES_DIR = "stunnel_profiles";
 	public static final String CONFIG = "config.conf";
+	public static final String PROFILE_DATABASE = "profileDB.json";
 	public static final String VERSION_CONF = "ver.conf";
 	public static final String DUMMY_CONF = "dummy.conf";
 	public static final String APP_LOG = "log";
@@ -42,6 +44,7 @@ public class Constants {
 	public static final String STUNNEL_OUTPUT = "output";
 	public static final String TUNNEL = "tunnel";
 	public static final String STUNNEL_LOG = "log";
+
 
 	// log related constants
 	public static final int LOG_LEVEL_DEFAULT = 5;

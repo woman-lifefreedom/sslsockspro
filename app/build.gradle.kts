@@ -64,6 +64,12 @@ android {
             keyAlias = gradleLocalProperties(rootDir).getProperty("keyAlias")
             keyPassword = gradleLocalProperties(rootDir).getProperty("keyPassword")
         }
+        getByName("debug") {
+            storeFile = file(gradleLocalProperties(rootDir).getProperty("storeFile"))
+            storePassword = gradleLocalProperties(rootDir).getProperty("storePassword")
+            keyAlias = gradleLocalProperties(rootDir).getProperty("keyAlias")
+            keyPassword = gradleLocalProperties(rootDir).getProperty("keyPassword")
+        }
     }
 
     buildTypes {
@@ -142,6 +148,7 @@ dependencies {
     implementation("androidx.preference:preference:1.2.0")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("com.android.support:multidex:1.0.3")
+    implementation("com.google.code.gson:gson:2.9.0")
     implementation(group = "commons-io", name = "commons-io", version = "2.6")
 }
 

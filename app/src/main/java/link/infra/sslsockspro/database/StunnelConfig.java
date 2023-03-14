@@ -4,12 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 class StunnelConfig {
-    String remark;
-    String ovpnProfile;
-    Boolean runOvpn;
-    final List<ServiceOptions> serviceOptions = new ArrayList<>();
 
-    class ServiceOptions {
+    class StunnelGlobalOptions {
+        String remark;
+        String ovpnProfile;
+        Boolean runOvpn;
+
+        public StunnelGlobalOptions(String remark, String ovpnProfile, Boolean runOvpn) {
+            this.remark = remark;
+            this.ovpnProfile = ovpnProfile;
+            this.runOvpn = runOvpn;
+        }
+    }
+
+    class StunnelServiceOptions {
         String serviceName;
         String acceptHost;
         String acceptPort;
@@ -18,11 +26,6 @@ class StunnelConfig {
         String connectPort;
     }
 
-    void parseConfig(String config) {
-
-    }
-
-    void parseServiceOptions(String options) {
-
-    }
+    void parseConfig(String config) { }
+    void parseServiceOptions(String options) { }
 }
