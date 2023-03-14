@@ -32,6 +32,9 @@ import static link.infra.sslsockspro.Constants.PROFILES_DIR;
 import static link.infra.sslsockspro.Constants.SERVICE_DIR;
 import static link.infra.sslsockspro.Constants.SSLSOCKS_REMARK;
 import static link.infra.sslsockspro.Constants.TUNNEL;
+import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_OVPN_PROFILE;
+import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_OVPN_RUN;
+import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_REMARK;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -62,6 +65,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Pattern;
 
 import link.infra.sslsockspro.BuildConfig;
 import link.infra.sslsockspro.database.ProfileDB;
@@ -263,45 +267,54 @@ public class StunnelService extends Service {
 	 */
 	static boolean setupConfigFile(Context context) {
 		String profileName = ProfileDB.getFile();
-		String profileFullPath = context.getFilesDir().getAbsolutePath() + "/" + PROFILES_DIR + "/" + profileName;
-		File profile = new File(profileFullPath);
-		String configFullPath = context.getFilesDir().getAbsolutePath() + "/" + SERVICE_DIR + "/" + CONFIG;
-		File config = new File(configFullPath);
+		File profile = new File(context.getFilesDir().getAbsolutePath() + "/" + PROFILES_DIR + "/" + profileName);
+		File config = new File(context.getFilesDir().getAbsolutePath() + "/" + SERVICE_DIR + "/" + CONFIG);
 		try {
 			final BufferedSource in = Okio.buffer(Okio.source(profile));
 			BufferedSink out = Okio.buffer(Okio.sink(config));
 			String fileContents = in.readUtf8();
-			// remove leading whitespace + remove commented + remove empty lines
-			String pendingContent = fileContents.replaceAll("(?m)^[\\s]*","").replaceAll("(?m)^#.*", "").replaceAll("(?m)^[ \t]*\r?\n", "");
-			String[] lines = pendingContent.split("\n");
-			for(int i=0;i<lines.length;i++){
-				if (lines[i].startsWith(OVPN_PROFILE)
-						| lines[i].startsWith(OVPN_RUN)
-						| lines[i].startsWith(SSLSOCKS_REMARK)
-						| lines[i].startsWith(TUNNEL)
-						| lines[i].startsWith("pid")
-						| lines[i].startsWith("output")
-						| lines[i].startsWith("log")) {
-					lines[i]="";
-				}
-			}
-			List<String> linesList = new ArrayList<>(Arrays.asList(lines));
-			linesList.add(0,"output =" + context.getFilesDir().getPath() + "/" + APP_LOG);
-			linesList.add(0,"log = append");
-//			if (LogFragment.clearLogsOnNewConnect) {
-//				linesList.add(0,"log = overwrite");
-//			} else {
-//				linesList.add(0,"log = append");
-//			}
-			linesList.add(0,"debug = 7");
-			lines = linesList.toArray(lines);
-			pendingContent = TextUtils.join("\n",lines);
-			out.writeUtf8(pendingContent + "\n");
+			// remove openvpn part
+			// remove sslsocks specific keys
+			String stunnelConfig = fileContents.replaceAll("<openvpn>[\\s\\S]*</openvpn>","")
+					.replaceAll("[\\s]*" + KEY_ST_REMARK + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*","")
+					.replaceAll("[\\s]*" + KEY_ST_OVPN_PROFILE + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*","")
+					.replaceAll("[\\s]*" + KEY_ST_OVPN_RUN + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*","");
+			// add lines related to writing the log file
+			String logConfig =
+					"debug = 7" + "\n" +
+					"log = append" + "\n" +
+					"output =" + context.getFilesDir().getPath() + "/" + APP_LOG + "\n";
+		//
+		//
+		//	// remove leading whitespace + remove commented + remove empty lines
+		//	String pendingContent = fileContents.replaceAll("(?m)^[\\s]*","").replaceAll("(?m)^#.*", "").replaceAll("(?m)^[ \t]*\r?\n", "");
+		//	String[] lines = pendingContent.split("\n");
+		//	for(int i=0;i<lines.length;i++){
+		//		if (lines[i].startsWith(OVPN_PROFILE)
+		//				| lines[i].startsWith(OVPN_RUN)
+		//				| lines[i].startsWith(SSLSOCKS_REMARK)
+		//				| lines[i].startsWith(TUNNEL)
+		//				| lines[i].startsWith("pid")
+		//				| lines[i].startsWith("output")
+		//				| lines[i].startsWith("log"))
+		//		{
+		//			lines[i]="";
+		//		}
+		//	}
+		//	List<String> linesList = new ArrayList<>(Arrays.asList(lines));
+		//	linesList.add(0,"output =" + context.getFilesDir().getPath() + "/" + APP_LOG);
+		//	linesList.add(0,"log = append");
+//		//	if (LogFragment.clearLogsOnNewConnect) {
+//		//		linesList.add(0,"log = overwrite");
+//		//	} else {
+//		//		linesList.add(0,"log = append");
+//		//	}
+		//	linesList.add(0,"debug = 7");
+		//	lines = linesList.toArray(lines);
+		//	pendingContent = TextUtils.join("\n",lines);
+			out.writeUtf8(logConfig + stunnelConfig);
 			out.close();
 			return true;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
@@ -320,9 +333,6 @@ public class StunnelService extends Service {
 			out.writeUtf8(dummyConfigContents);
 			out.close();
 			return true;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;

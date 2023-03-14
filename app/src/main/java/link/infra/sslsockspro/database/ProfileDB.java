@@ -3,7 +3,9 @@ package link.infra.sslsockspro.database;
 import static link.infra.sslsockspro.Constants.EXT_CONF;
 import static link.infra.sslsockspro.Constants.EXT_XML;
 import static link.infra.sslsockspro.Constants.PROFILES_DIR;
+import static link.infra.sslsockspro.Constants.PROFILE_DATABASE;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_ACCEPT;
+import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_CLIENT;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_CONNECT;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_OVPN_PROFILE;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_OVPN_RUN;
@@ -15,13 +17,16 @@ import android.util.Xml;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.xmlpull.v1.XmlSerializer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +37,7 @@ import java.util.regex.Pattern;
 import link.infra.sslsockspro.R;
 import link.infra.sslsockspro.gui.activities.MainActivity;
 import okio.BufferedSink;
+import okio.BufferedSource;
 import okio.Okio;
 
 /*
@@ -48,7 +54,7 @@ public class ProfileDB {
     private static int position = -1; // -1 means no position by default
     private static int lastSelectedPosition;
 
-    private static final List<ProfileItem> mProfileItems = new ArrayList<>();
+    private static List<ProfileItem> mProfileItems = new ArrayList<>();
     private static ProfileItem newProfileItem;
 
     static class StunnelGlobalOptions {
@@ -57,12 +63,6 @@ public class ProfileDB {
         Boolean runOvpn = false;
 
         public StunnelGlobalOptions() {
-        }
-
-        public StunnelGlobalOptions(String remark, String ovpnProfile, Boolean runOvpn) {
-            this.remark = remark;
-            this.ovpnProfile = ovpnProfile;
-            this.runOvpn = runOvpn;
         }
     }
 
@@ -76,20 +76,11 @@ public class ProfileDB {
     }
 
     static class ProfileItem {
-        String configFileName;
+        String profileName;
         StunnelGlobalOptions stunnelGlobalOptions;
         List<StunnelServiceOptions> stunnelServiceOptions = new ArrayList<>();
 
-        public ProfileItem(StunnelGlobalOptions stunnelGlobalOptions) {
-            this.stunnelGlobalOptions = stunnelGlobalOptions;
-        }
-
         public ProfileItem() {
-        }
-
-        public ProfileItem(String configFileName, StunnelGlobalOptions stunnelGlobalOptions) {
-            this.configFileName = configFileName;
-            this.stunnelGlobalOptions = stunnelGlobalOptions;
         }
     }
 
@@ -107,30 +98,69 @@ public class ProfileDB {
         return profileManagement;
     }
 
-    public static void saveProfile(String fileContents, Context context) throws IOException {
-        mProfileItems.add(newProfileItem);
+    public static void saveProfilesToDatabase(Context context) throws IOException {
+        BufferedSink out;
         Gson gson = new Gson();
-        String test = gson.toJson(mProfileItems);
+        File db = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + PROFILE_DATABASE);
+        out = Okio.buffer(Okio.sink(db));
+        out.writeUtf8(gson.toJson(mProfileItems));
+        out.close();
+    }
 
+    public static void loadProfilesFromDatabase(Context context) throws IOException {
+        File db = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + PROFILE_DATABASE);
+        final BufferedSource in = Okio.buffer(Okio.source(db));
+        String contents = in.readUtf8();
+        Gson gson = new Gson();
+
+        Type listType = new TypeToken<List<ProfileItem>>() {}.getType();
+        mProfileItems = gson.fromJson(contents,listType);
+    }
+
+    /**
+     * This method is used to rebuild the database from already stored profiles.
+     * it reads a config file from PROFILES_DIR and adds a profile item to the database class.
+     * Call @saveProfilesToDatabase() to store the database class to the json database PROFILE_DATABASE
+     * @param context - application context
+     * @param fileName - file name from application database
+     * @throws IOException
+     */
+    public static void addProfileFromConfigFile(Context context, String fileName) throws IOException {
+        File profile = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName);
+        final BufferedSource in = Okio.buffer(Okio.source(profile));
+        String contents = in.readUtf8();
+        parseProfile(contents);
+        newProfileItem.profileName = fileName;
+        mProfileItems.add(newProfileItem);
+    }
+
+    /**
+     * the method parseProfile must be called before this method
+     * @param fileContents - raw contents of the profile
+     * @param context - pass the application context to the method
+     * @throws IOException
+     */
+    public static void saveProfile(String fileContents, Context context) throws IOException {
+        /* save the profile */
+        BufferedSink out;
         String fileName = UUID.randomUUID().toString();
-        File storedData = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName + EXT_CONF);
-        BufferedSink out = Okio.buffer(Okio.sink(storedData));
+        File profile = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName + EXT_CONF);
+        out = Okio.buffer(Okio.sink(profile));
         out.writeUtf8(fileContents);
         out.close();
 
-        //if ( fileName.endsWith(EXT_XML) ) {
-        //} else if ( fileName.endsWith(EXT_CONF) ) {
-        //    out.writeUtf8("<sslsockspro>\n");
-        //    out.writeUtf8("<stunnel>\n");
-        //    out.writeUtf8(fileContents);
-        //    out.writeUtf8("\n");
-        //    out.writeUtf8("</stunnel>\n");
-        //    out.writeUtf8("</sslsockspro>\n");
-        //}
+        /* add the profile contents to the database */
+        newProfileItem.profileName = fileName;
+        mProfileItems.add(newProfileItem);
+        saveProfilesToDatabase(context);
+        //Gson gson = new Gson();
+        //File db = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + PROFILE_DATABASE);
+        //out = Okio.buffer(Okio.sink(db));
+        //out.writeUtf8(gson.toJson(mProfileItems));
+        //out.close();
     }
 
     public static boolean parseProfile(String fileContents) {
-        // TODO : parse the profile and validate the content
         String sslsocksConfig;
         //remove openvpn part of the config
         sslsocksConfig = fileContents.replaceAll("<openvpn>[\\s\\S]*</openvpn>","");
@@ -138,22 +168,21 @@ public class ProfileDB {
         sslsocksConfig = sslsocksConfig.replaceAll("(?m)^[\\s]*#","");
         // first part is stunnel global options, the rest are arrays of service options
         final String[] configParts = sslsocksConfig.split("(?=\\[)");
-        //final String goString = configParts[0];
-        //final String soString[] = configParts;
 
         newProfileItem = new ProfileItem();
 
         StunnelGlobalOptions go = new StunnelGlobalOptions();
-        parseStunnelGlobalOptions(configParts[0],go);
-        newProfileItem.stunnelGlobalOptions = go;
+        if ( parseStunnelGlobalOptions(configParts[0],go) ) {
+            newProfileItem.stunnelGlobalOptions = go;
+        } else return false;
 
         StunnelServiceOptions so;
         for (int i = 1; i < configParts.length; i++) {
             so = new StunnelServiceOptions();
-            parseStunnelServiceOptions(configParts[i],so);
-            newProfileItem.stunnelServiceOptions.add(so);
+            if ( parseStunnelServiceOptions(configParts[i],so) ) {
+                newProfileItem.stunnelServiceOptions.add(so);
+            } else return false;
         }
-
         return true;
     }
 
@@ -203,12 +232,26 @@ public class ProfileDB {
             so.connectHost = matcher.group(1);
             so.connectPort = matcher.group(2);
         }
-        //matcher = Pattern.compile("[\\s]*" + KEY_ST_REMARK + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*")
-        //        .matcher(serviceOptions);
-        //if (matcher.find()) {
-        //    so.acceptHost = matcher.group(1);
-        //}
+
+        matcher = Pattern.compile("[\\s]*" + KEY_ST_CLIENT + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*")
+                .matcher(serviceOptions);
+        if (matcher.find()) {
+            if (Objects.equals(matcher.group(1), "yes"))
+                so.client = true;
+            else if (Objects.equals(matcher.group(1), "no"))
+                so.client = false;
+            else {
+                // TODO: bad config
+            }
+        }
         return true;
+    }
+
+    /**
+     * @return last selected file on the database
+     */
+    public static String getFile() {
+        return mProfileItems.get(position).profileName;
     }
 
     public static List<String> getFiles() {
@@ -246,13 +289,6 @@ public class ProfileDB {
 
     public static Boolean getRunOvpn() {
         return runOvpns.get(position);
-    }
-
-    /**
-     * @return last selected file on the database
-     */
-    public static String getFile() {
-        return files.get(position);
     }
 
     public static int getPosition() {

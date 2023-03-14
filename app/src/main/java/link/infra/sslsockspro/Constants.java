@@ -31,7 +31,7 @@ public class Constants {
 	public static final String SERVICE_DIR = "stunnel_service";
 	public static final String PROFILES_DIR = "stunnel_profiles";
 	public static final String CONFIG = "config.conf";
-	public static final String PROFILE_DATABASE = "profileDB.json";
+	public static final String PROFILE_DATABASE = "profiles_db.json";
 	public static final String VERSION_CONF = "ver.conf";
 	public static final String DUMMY_CONF = "dummy.conf";
 	public static final String APP_LOG = "log";
