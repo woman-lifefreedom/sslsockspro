@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017-2021 comp500
+ * Modified by WOMAN-LIFE-FREEDOM 2022
+ * (First release: 2017-2021 comp500)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,8 +78,8 @@ public class ProfileFragment extends Fragment {
 
 	private RecyclerView recyclerView;
 	private TextView emptyView;
-	private final List<String> remarks = ProfileDB.getRemarks();
-	private final List<String> servers = ProfileDB.getServers();
+//	private final List<String> remarks = ProfileDB.getRemarks();
+//	private final List<String> servers = ProfileDB.getServers();
 	private TextView infoBox;
 
 	public ProfileFragment() {
@@ -106,7 +107,7 @@ public class ProfileFragment extends Fragment {
 
 		recyclerView = view.findViewById(R.id.profile_list);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
-		recyclerView.setAdapter(new ProfileRecyclerViewAdapter(remarks, servers, mListener, new ProfileRecyclerViewAdapter.OnSetView() {
+		recyclerView.setAdapter(new ProfileRecyclerViewAdapter(mListener, new ProfileRecyclerViewAdapter.OnSetView() {
 			@Override
 			public void setRecyclerView() {
 				recyclerView.setVisibility(View.VISIBLE);
@@ -125,7 +126,7 @@ public class ProfileFragment extends Fragment {
 		infoBox = view.findViewById(R.id.info_box);
 		infoBox.setText(R.string.run_status_not_running);
 
-		profileUpdateList(context);
+//		profileUpdateList(context);
 
 		MainActivity.toggle.observe(getViewLifecycleOwner(), bool -> {
 			if (bool) {
@@ -188,88 +189,88 @@ public class ProfileFragment extends Fragment {
 		void onProfileSelect(int position);
 	}
 
-	public void profileUpdateList(Context context) {
-		remarks.clear();
-		servers.clear();
-		ProfileDB.clear();
-		File folder = new File(context.getFilesDir().getAbsolutePath() + "/" + PROFILES_DIR);
-		String fileName;
-
-		// sort the files
-		File[] files = folder.listFiles();
-		if (files == null) {
-			return;
-		} else {
-			Arrays.sort(files, new Comparator<File>() {
-				public int compare(File f1, File f2) {
-					return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
-				}
-			});
-		}
-		for (File fileEntry : files) {
-		//for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
-			if (fileEntry.getPath().endsWith(EXT_CONF)) { // Only show config files
-				fileName = fileEntry.getName();
-				// remove leading whitespace + remove commented + keep empty lines
-				//String pendingContent = fileContents.replaceAll("(?m)^\\s","").replaceAll("(?m)^#.*", "");
-				BufferedSource buffFile = null;
-				try {
-					buffFile = Okio.buffer(Okio.source(fileEntry));
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
-				Pattern ovpnPattern = Pattern.compile("^[\\s]*(?!#)" + OVPN_PROFILE + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*");
-				Pattern ovpnRunPattern = Pattern.compile("^[\\s]*(?!#)" + OVPN_RUN + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*");
-				Pattern remarkPattern = Pattern.compile("^[\\s]*(?!#)" + SSLSOCKS_REMARK + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*");
-				Pattern serverPattern = Pattern.compile("^[\\s]*(?!#)" + "connect" + "[\\s]*=[\\s]*(.*)[\\s]*");
-				String line = "";
-				String ovpnString = "";
-				String ovpnRunString = "";
-				String remarkString = "";
-				String serverString = "";
-				while (true) {
-					try {
-						if (buffFile != null && ((line = buffFile.readUtf8Line()) == null)) break;
-					} catch (IOException e) {
-						Log.e(TAG, "File error", e);
-					}
-					Matcher ovpnMatcher = ovpnPattern.matcher(line);
-					Matcher ovpnRunMatcher = ovpnRunPattern.matcher(line);
-					Matcher remarkMatcher = remarkPattern.matcher(line);
-					Matcher serverMatcher = serverPattern.matcher(line);
-					if (ovpnMatcher.find()) {
-						ovpnString = ovpnMatcher.group(1);
-					}
-					if (ovpnRunMatcher.find()) {
-						ovpnRunString = ovpnRunMatcher.group(1);
-					}
-					if (remarkMatcher.find()) {
-						remarkString = remarkMatcher.group(1);
-					}
-					if (serverMatcher.find()) {
-						serverString = serverMatcher.group(1);
-					}
-				}
-				if (ovpnRunString != null) {
-					if (ovpnRunString.equals("yes"))
-					{
-						ProfileDB.addDB(fileName,remarkString,serverString ,ovpnString, TRUE);
-					} else {
-						ProfileDB.addDB(fileName,remarkString,serverString,ovpnString, FALSE);
-					}
-				}
-			}
-		}
-		// Show text if there are no items
-		if (remarks.isEmpty()) {
-			recyclerView.setVisibility(View.GONE);
-			emptyView.setVisibility(View.VISIBLE);
-		} else {
-			recyclerView.setVisibility(View.VISIBLE);
-			emptyView.setVisibility(View.GONE);
-		}
-		Objects.requireNonNull(recyclerView.getAdapter()).notifyDataSetChanged();
-	}
+//	public void profileUpdateList(Context context) {
+//		//remarks.clear();
+//		//servers.clear();
+//		//ProfileDB.clear();
+//		File folder = new File(context.getFilesDir().getAbsolutePath() + "/" + PROFILES_DIR);
+//		String fileName;
+//
+//		// sort the files
+//		File[] files = folder.listFiles();
+//		if (files == null) {
+//			return;
+//		} else {
+//			Arrays.sort(files, new Comparator<File>() {
+//				public int compare(File f1, File f2) {
+//					return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
+//				}
+//			});
+//		}
+//		for (File fileEntry : files) {
+//		//for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
+//			if (fileEntry.getPath().endsWith(EXT_CONF)) { // Only show config files
+//				fileName = fileEntry.getName();
+//				// remove leading whitespace + remove commented + keep empty lines
+//				//String pendingContent = fileContents.replaceAll("(?m)^\\s","").replaceAll("(?m)^#.*", "");
+//				BufferedSource buffFile = null;
+//				try {
+//					buffFile = Okio.buffer(Okio.source(fileEntry));
+//				} catch (FileNotFoundException e) {
+//					e.printStackTrace();
+//				}
+//				Pattern ovpnPattern = Pattern.compile("^[\\s]*(?!#)" + OVPN_PROFILE + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*");
+//				Pattern ovpnRunPattern = Pattern.compile("^[\\s]*(?!#)" + OVPN_RUN + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*");
+//				Pattern remarkPattern = Pattern.compile("^[\\s]*(?!#)" + SSLSOCKS_REMARK + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*");
+//				Pattern serverPattern = Pattern.compile("^[\\s]*(?!#)" + "connect" + "[\\s]*=[\\s]*(.*)[\\s]*");
+//				String line = "";
+//				String ovpnString = "";
+//				String ovpnRunString = "";
+//				String remarkString = "";
+//				String serverString = "";
+//				while (true) {
+//					try {
+//						if (buffFile != null && ((line = buffFile.readUtf8Line()) == null)) break;
+//					} catch (IOException e) {
+//						Log.e(TAG, "File error", e);
+//					}
+//					Matcher ovpnMatcher = ovpnPattern.matcher(line);
+//					Matcher ovpnRunMatcher = ovpnRunPattern.matcher(line);
+//					Matcher remarkMatcher = remarkPattern.matcher(line);
+//					Matcher serverMatcher = serverPattern.matcher(line);
+//					if (ovpnMatcher.find()) {
+//						ovpnString = ovpnMatcher.group(1);
+//					}
+//					if (ovpnRunMatcher.find()) {
+//						ovpnRunString = ovpnRunMatcher.group(1);
+//					}
+//					if (remarkMatcher.find()) {
+//						remarkString = remarkMatcher.group(1);
+//					}
+//					if (serverMatcher.find()) {
+//						serverString = serverMatcher.group(1);
+//					}
+//				}
+//				if (ovpnRunString != null) {
+//					if (ovpnRunString.equals("yes"))
+//					{
+//						ProfileDB.addDB(fileName,remarkString,serverString ,ovpnString, TRUE);
+//					} else {
+//						ProfileDB.addDB(fileName,remarkString,serverString,ovpnString, FALSE);
+//					}
+//				}
+//			}
+//		}
+//		// Show text if there are no items
+//		//if (remarks.isEmpty()) {
+//		//	recyclerView.setVisibility(View.GONE);
+//		//	emptyView.setVisibility(View.VISIBLE);
+//		//} else {
+//		//	recyclerView.setVisibility(View.VISIBLE);
+//		//	emptyView.setVisibility(View.GONE);
+//		//}
+//		Objects.requireNonNull(recyclerView.getAdapter()).notifyDataSetChanged();
+//	}
 
 	public RecyclerView getRecyclerView() {
 		return recyclerView;

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017-2021 comp500
+ * Modified by WOMAN-LIFE-FREEDOM
+ * (First release: 2017-2021 comp500)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,10 +77,6 @@ import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
 
-/**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- */
 public class StunnelService extends Service {
 	private static final String ACTION_STARTNOVPN = "link.infra.sslsockspro.service.action.STARTNOVPN";
 	private static final String ACTION_RESUMEACTIVITY = "link.infra.sslsockspro.service.action.RESUMEACTIVITY";
@@ -126,16 +123,9 @@ public class StunnelService extends Service {
 			stunnelThreadCreated = true;
 			stunnelThread.start();
 		}
-
 		super.onCreate();
 	}
 
-	/**
-	 * Starts this service to perform action Foo with the given parameters. If
-	 * the service is already performing a task this action will be queued.
-	 *
-	 * @see IntentService
-	 */
 	public static void start(Context context) {
 		Intent intent = new Intent(context, StunnelService.class);
 		intent.setAction(ACTION_STARTNOVPN);
@@ -196,10 +186,9 @@ public class StunnelService extends Service {
 		serviceStartedBool = false;
 
 		Log.d(TAG, "Stunnel ended");
-//		privateServiceStarted.postValue(false);
 		removeNotification();
-		super.onDestroy();
 		Log.d(TAG, "Service ended");
+		super.onDestroy();
 	}
 
 	public static boolean isRunningBool() {
@@ -249,7 +238,6 @@ public class StunnelService extends Service {
 		streamReader.start();
 	}
 
-
 	public void appendLog(String value) {
 		currLogValue += value + "\n";
 		logDataPrivate.postValue(currLogValue);
@@ -283,35 +271,7 @@ public class StunnelService extends Service {
 			String logConfig =
 					"debug = 7" + "\n" +
 					"log = append" + "\n" +
-					"output =" + context.getFilesDir().getPath() + "/" + APP_LOG + "\n";
-		//
-		//
-		//	// remove leading whitespace + remove commented + remove empty lines
-		//	String pendingContent = fileContents.replaceAll("(?m)^[\\s]*","").replaceAll("(?m)^#.*", "").replaceAll("(?m)^[ \t]*\r?\n", "");
-		//	String[] lines = pendingContent.split("\n");
-		//	for(int i=0;i<lines.length;i++){
-		//		if (lines[i].startsWith(OVPN_PROFILE)
-		//				| lines[i].startsWith(OVPN_RUN)
-		//				| lines[i].startsWith(SSLSOCKS_REMARK)
-		//				| lines[i].startsWith(TUNNEL)
-		//				| lines[i].startsWith("pid")
-		//				| lines[i].startsWith("output")
-		//				| lines[i].startsWith("log"))
-		//		{
-		//			lines[i]="";
-		//		}
-		//	}
-		//	List<String> linesList = new ArrayList<>(Arrays.asList(lines));
-		//	linesList.add(0,"output =" + context.getFilesDir().getPath() + "/" + APP_LOG);
-		//	linesList.add(0,"log = append");
-//		//	if (LogFragment.clearLogsOnNewConnect) {
-//		//		linesList.add(0,"log = overwrite");
-//		//	} else {
-//		//		linesList.add(0,"log = append");
-//		//	}
-		//	linesList.add(0,"debug = 7");
-		//	lines = linesList.toArray(lines);
-		//	pendingContent = TextUtils.join("\n",lines);
+					"output = " + context.getFilesDir().getPath() + "/" + APP_LOG + "\n";
 			out.writeUtf8(logConfig + stunnelConfig);
 			out.close();
 			return true;
@@ -341,9 +301,6 @@ public class StunnelService extends Service {
 
 	public static boolean createDummyConfig(Context context) {
 		File dummyConf = new File(context.getFilesDir().getAbsoluteFile() + "/" +SERVICE_DIR + "/" + DUMMY_CONF);
-//		if (dummyConf.exists() ) {
-//			return true; // already created
-//		}
 		String logPolicy;
 		if (LogFragment.clearLogsOnNewConnect) {
 			logPolicy = "overwrite";

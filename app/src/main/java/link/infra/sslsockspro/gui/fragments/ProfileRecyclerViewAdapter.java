@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017-2021 comp500
+ * Modified by WOMAN-LIFE-FREEDOM
+ * (First release: 2017-2021 comp500)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +39,8 @@ import link.infra.sslsockspro.R;
 
 public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecyclerViewAdapter.ViewHolder> {
 
-    public final List<String> mRemarks;
-    public final List<String> mServers;
+//    public final List<String> mRemarks;
+//    public final List<String> mServers;
     private final ProfileFragment.OnProfileFragmentInteractionListener mListener;
     private final OnSetView setView;
     private static final long CLICK_TIME_INTERVAL = 100;
@@ -47,12 +48,10 @@ public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecy
 
     int selectedItem; // -1 means no selected item by default.
 
-    public ProfileRecyclerViewAdapter(List<String> mRemarks,
-                                      List<String> mServers,
-                                      ProfileFragment.OnProfileFragmentInteractionListener listener,
+    public ProfileRecyclerViewAdapter(ProfileFragment.OnProfileFragmentInteractionListener listener,
                                       OnSetView setView) {
-        this.mRemarks = mRemarks;
-        this.mServers = mServers;
+//        this.mRemarks = mRemarks;
+//        this.mServers = mServers;
         this.mListener = listener;
         this.setView = setView;
     }
@@ -107,8 +106,10 @@ public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecy
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.mRemarkView.setText(mRemarks.get(position));
-        holder.mServerView.setText(mServers.get(position));
+//        holder.mRemarkView.setText(mRemarks.get(position));
+//        holder.mServerView.setText(mServers.get(position));
+        holder.mRemarkView.setText(ProfileDB.getRemark(position));
+        holder.mServerView.setText(ProfileDB.getHost(position, 0));
 
         if (ProfileDB.getSize() > 0 && selectedItem == -1) {
             selectedItem = 0;
@@ -143,7 +144,7 @@ public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecy
                 // first delete the item and update the list
                 mListener.onProfileDelete(position);
                 notifyItemRemoved(position);
-                notifyItemRangeChanged(position,mRemarks.size());
+                notifyItemRangeChanged(position,ProfileDB.getSize());
                 if (selectedItem == ProfileDB.getSize()) {
                     // ProfileDB.getSize is already reduced by 1 at this point
                     selectedItem = selectedItem -1;
@@ -190,7 +191,7 @@ public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecy
 
     @Override
     public int getItemCount() {
-        return mRemarks.size();
+        return ProfileDB.getSize();
     }
 
     public interface OnSetView {

@@ -1,7 +1,29 @@
+/*
+ * Author: WOMAN-LIFE-FREEDOM
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Additional permission under GNU GPL version 3 section 7:
+ * If you modify this Program, or any covered work, by linking or combining
+ * it with OpenSSL (or a modified version of that library), containing parts
+ * covered by the terms of the OpenSSL License, the licensors of this Program
+ * grant you additional permission to convey the resulting work.
+ */
+
 package link.infra.sslsockspro.database;
 
 import static link.infra.sslsockspro.Constants.EXT_CONF;
-import static link.infra.sslsockspro.Constants.EXT_XML;
 import static link.infra.sslsockspro.Constants.PROFILES_DIR;
 import static link.infra.sslsockspro.Constants.PROFILE_DATABASE;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_ACCEPT;
@@ -12,14 +34,10 @@ import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_OVPN_RUN;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_REMARK;
 
 import android.content.Context;
-import android.util.Log;
-import android.util.Xml;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.xmlpull.v1.XmlSerializer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,29 +46,30 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import link.infra.sslsockspro.R;
-import link.infra.sslsockspro.gui.activities.MainActivity;
 import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
 
-/*
+/**
 A Singleton class to manage the profiles
  */
 public class ProfileDB {
 
+    public static final int NEW_PROFILE = -1;
     private static ProfileDB profileManagement = null;
-    private static final List<String> files = new ArrayList<>();
-    private static final List<String> remarks = new ArrayList<>();
-    private static final List<String> servers = new ArrayList<>();
-    private static final List<String> ovpns = new ArrayList<>();
-    private static final List<Boolean> runOvpns = new ArrayList<>();
+//    private static final List<String> files = new ArrayList<>();
+//    private static final List<String> remarks = new ArrayList<>();
+//    private static final List<String> servers = new ArrayList<>();
+//    private static final List<String> ovpns = new ArrayList<>();
+//    private static final List<Boolean> runOvpns = new ArrayList<>();
     private static int position = -1; // -1 means no position by default
     private static int lastSelectedPosition;
 
@@ -125,7 +144,7 @@ public class ProfileDB {
      * @param fileName - file name from application database
      * @throws IOException
      */
-    public static void addProfileFromConfigFile(Context context, String fileName) throws IOException {
+    private static void addProfileFromConfigFile(Context context, String fileName) throws IOException {
         File profile = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName);
         final BufferedSource in = Okio.buffer(Okio.source(profile));
         String contents = in.readUtf8();
@@ -135,38 +154,70 @@ public class ProfileDB {
     }
 
     /**
+     * with this method the database class and database file are updated from the existing config files
+     * @param context - application context
+     * @throws IOException
+     */
+    public static void updateProfilesFromConfigFiles(Context context) throws IOException {
+        mProfileItems.clear();
+        File folder = new File(context.getFilesDir().getAbsolutePath() + "/" + PROFILES_DIR);
+        String fileName;
+
+        // sort the files
+        File[] files = folder.listFiles();
+        if (files == null) { return; }
+        else {
+            Arrays.sort(files, new Comparator<File>() {
+                public int compare(File f1, File f2) {
+                    return Long.compare(f1.lastModified(), f2.lastModified());
+                }
+            });
+        }
+        for (File fileEntry : files) {
+            if (fileEntry.getPath().endsWith(EXT_CONF)) { // Only show config files
+                fileName = fileEntry.getName();
+                addProfileFromConfigFile(context,fileName);
+            }
+        }
+    }
+
+    /**
      * the method parseProfile must be called before this method
      * @param fileContents - raw contents of the profile
      * @param context - pass the application context to the method
      * @throws IOException
      */
-    public static void saveProfile(String fileContents, Context context) throws IOException {
+    public static void saveProfile(String fileContents, Context context, int position) throws IOException {
         /* save the profile */
         BufferedSink out;
-        String fileName = UUID.randomUUID().toString();
-        File profile = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName + EXT_CONF);
+        String fileName;
+        if (position == NEW_PROFILE) {
+            fileName = UUID.randomUUID().toString() + EXT_CONF;
+        } else {
+            fileName = getFile(position);
+        }
+        File profile = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName);
         out = Okio.buffer(Okio.sink(profile));
         out.writeUtf8(fileContents);
         out.close();
 
         /* add the profile contents to the database */
         newProfileItem.profileName = fileName;
-        mProfileItems.add(newProfileItem);
+        if (position == NEW_PROFILE) {
+            mProfileItems.add(newProfileItem);
+        } else {
+            mProfileItems.set(position,newProfileItem);
+        }
         saveProfilesToDatabase(context);
-        //Gson gson = new Gson();
-        //File db = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + PROFILE_DATABASE);
-        //out = Okio.buffer(Okio.sink(db));
-        //out.writeUtf8(gson.toJson(mProfileItems));
-        //out.close();
     }
 
     public static boolean parseProfile(String fileContents) {
         String sslsocksConfig;
-        //remove openvpn part of the config
+        /* remove openvpn part of the config */
         sslsocksConfig = fileContents.replaceAll("<openvpn>[\\s\\S]*</openvpn>","");
-        //remove commented lines
+        /* remove commented lines */
         sslsocksConfig = sslsocksConfig.replaceAll("(?m)^[\\s]*#","");
-        // first part is stunnel global options, the rest are arrays of service options
+        /* first part is stunnel global options, the rest are arrays of service options */
         final String[] configParts = sslsocksConfig.split("(?=\\[)");
 
         newProfileItem = new ProfileItem();
@@ -254,29 +305,24 @@ public class ProfileDB {
         return mProfileItems.get(position).profileName;
     }
 
-    public static List<String> getFiles() {
-        if(profileManagement==null){
-            profileManagement = new ProfileDB();
-        }
-        return files;
+    public static String getFile(int position) {
+        return mProfileItems.get(position).profileName;
     }
 
     public static int getSize() {
-        return files.size();
+        return mProfileItems.size();
     }
 
-    public static List<String> getRemarks(){
-        if(profileManagement==null){
-            profileManagement = new ProfileDB();
-        }
-        return remarks;
+    public static String getRemark(int position){
+        return mProfileItems.get(position).stunnelGlobalOptions.remark;
     }
 
-    public static List<String> getServers(){
-        if(profileManagement==null){
-            profileManagement = new ProfileDB();
-        }
-        return servers;
+    public static String getHost(int position, int serviceIdx){
+        return mProfileItems.get(position).stunnelServiceOptions.get(serviceIdx).connectHost;
+    }
+
+    public static String getHostPort(int position, int serviceIdx){
+        return mProfileItems.get(position).stunnelServiceOptions.get(serviceIdx).connectPort;
     }
 
     public static void setPosition(int position) {
@@ -284,39 +330,31 @@ public class ProfileDB {
     }
 
     public static String getOvpn() {
-        return ovpns.get(position);
+        return mProfileItems.get(position).stunnelGlobalOptions.ovpnProfile;
     }
 
     public static Boolean getRunOvpn() {
-        return runOvpns.get(position);
+        return mProfileItems.get(position).stunnelGlobalOptions.runOvpn;
     }
 
     public static int getPosition() {
         return position;
     }
 
-    public static void addDB(String file, String remark, String server, String ovpn, Boolean runOvpn) {
-        ProfileDB.files.add(file);
-        ProfileDB.remarks.add(remark);
-        ProfileDB.servers.add(server);
-        ProfileDB.ovpns.add(ovpn);
-        ProfileDB.runOvpns.add(runOvpn);
-    }
+//    public static void addDB(String file, String remark, String server, String ovpn, Boolean runOvpn) {
+//        ProfileDB.files.add(file);
+//        ProfileDB.remarks.add(remark);
+//        ProfileDB.servers.add(server);
+//        ProfileDB.ovpns.add(ovpn);
+//        ProfileDB.runOvpns.add(runOvpn);
+//    }
 
     public static void clear() {
-        files.removeAll(files);
-        remarks.removeAll(remarks);
-        servers.removeAll(servers);
-        ovpns.removeAll(ovpns);
-        runOvpns.removeAll(runOvpns);
+        mProfileItems.clear();
     }
 
     public static void remove(int position) {
-        files.remove(position);
-        remarks.remove(position);
-        servers.remove(position);
-        ovpns.remove(position);
-        runOvpns.remove(position);
+        mProfileItems.remove(position);
     }
 
     public static int getLastSelectedPosition() {

@@ -23,25 +23,33 @@
 
 package link.infra.sslsockspro.database;
 
-public class StunnelKeys {
-    /**
-     notation:
-     KEY: to remind that this constant is a key
-     ST: for stunnel service
-     _THE_REST: description of the key
-     */
-    public static final String KEY_ST_OVPN_RUN = "ovpn_run";
-    public static final String KEY_ST_OVPN_PROFILE = "ovpn_profile";
-    public static final String KEY_ST_REMARK = "remark";
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.OpenableColumns;
 
-    /* service option keys */
-    public static final String KEY_ST_CONNECT = "connect";
-    public static final String KEY_ST_ACCEPT = "accept";
-    public static final String KEY_ST_CLIENT = "client";
+import java.util.Objects;
 
-    /* stunnel keys that should be removed from config file */
-    public static final String KEY_RM_ST_LOG = "log";           /* internal usage by app */
-    public static final String KEY_RM_ST_OUTPUT = "output";     /* internal usage by app */
-    public static final String KEY_RM_ST_DEBUG = "debug";     /* internal usage by app */
-    public static final String KEY_RM_ST_PID = "pid";           /* no pid is created */
+public class FileOperation {
+
+    public static String getFileName(Uri uri, Context context) {
+        String result = null;
+        if ("content".equals(uri.getScheme())) {
+            try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            }
+        }
+        if (result == null) {
+            result = Objects.requireNonNull(uri.getPath());
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        // remove the file extension from the result
+        return result;
+    }
+
 }

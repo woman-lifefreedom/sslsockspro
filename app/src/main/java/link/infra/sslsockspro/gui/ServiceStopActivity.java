@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017-2021 comp500
+ * Modified by WOMAN-LIFE-FREEDOM
+ * (First release: 2017-2021 comp500)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

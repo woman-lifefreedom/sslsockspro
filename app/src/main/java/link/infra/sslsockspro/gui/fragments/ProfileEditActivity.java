@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017-2021 comp500
+ * Modified by WOMAN-LIFE-FREEDOM 2022
+ * (First release: 2017-2021 comp500)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@ package link.infra.sslsockspro.gui.fragments;
 
 import static link.infra.sslsockspro.Constants.EXT_CONF;
 import static link.infra.sslsockspro.Constants.PROFILES_DIR;
+import static link.infra.sslsockspro.database.ProfileDB.NEW_PROFILE;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -51,6 +53,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 import link.infra.sslsockspro.R;
+import link.infra.sslsockspro.database.FileOperation;
+import link.infra.sslsockspro.database.ProfileDB;
 import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
@@ -60,50 +64,11 @@ public class ProfileEditActivity extends AppCompatActivity {
     private String fileName = null;
     private boolean importFlag = false;
     private boolean typedProfile = false;
-    public static final String ARG_EXISTING_FILE_NAME = "EXISTING_FILE_NAME";
+    public static final String ARG_POSITION= "POSITION";
+    private static int position;
 
     private static final String TAG = ProfileEditActivity.class.getSimpleName();
     private boolean showDelete = true;
-
-    private final ActivityResultLauncher<Intent> importFileRequestLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-        if (result.getResultCode() == RESULT_OK) {
-            Intent resultData = result.getData();
-            if (resultData != null) {
-                Uri fileData = resultData.getData();
-                if (fileData != null) {
-                    String fileName;
-                    String fileContents;
-                    InputStream inputStream;
-                    try {
-                        // TODO: this doesn't seem to work on Android 4.4.x, for some reason
-                        inputStream = getContentResolver().openInputStream(fileData);
-                        if (inputStream == null) { // Just to keep the linter happy that I'm doing null checks
-                            throw new FileNotFoundException();
-                        }
-                    } catch (FileNotFoundException e) {
-                        Log.e(TAG, "Failed to read imported file", e);
-                        Toast.makeText(this, R.string.file_read_fail, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    try (BufferedSource in = Okio.buffer(Okio.source(inputStream))) {
-                        fileContents = in.readUtf8();
-                    } catch (IOException e) {
-                        Log.e(TAG, "Failed to read imported file", e);
-                        Toast.makeText(this, R.string.file_read_fail, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    fileName = getFileName(fileData);
-                    if (!fileName.endsWith(EXT_CONF) ) {
-                        Toast.makeText(this, R.string.profile_name_ext, Toast.LENGTH_SHORT).show();
-                    } else {
-                        vfileContents.setText(fileContents);
-                        this.fileName = UUID.randomUUID().toString() + EXT_CONF;
-                        importFlag = true;
-                    }
-                }
-            }
-        }
-    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,9 +83,9 @@ public class ProfileEditActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (intent != null) {
-            fileName = intent.getStringExtra(ARG_EXISTING_FILE_NAME);
+            position = intent.getIntExtra(ARG_POSITION, NEW_PROFILE);
         }
-        if (fileName == null) {
+        if (position == NEW_PROFILE) {
             getSupportActionBar().setTitle(R.string.title_activity_profile_create);
             findViewById(R.id.import_button).setVisibility(View.VISIBLE);
             showDelete = false;
@@ -128,9 +93,6 @@ public class ProfileEditActivity extends AppCompatActivity {
         } else {
             openFile();
         }
-
-        // Add event listeners in code, because onClick doesn't work on 4.4.x for some reason
-        // https://stackoverflow.com/a/54060752/816185
         findViewById(R.id.import_button).setOnClickListener(view -> importExternalFile());
     }
 
@@ -169,6 +131,45 @@ public class ProfileEditActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private final ActivityResultLauncher<Intent> importFileRequestLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK) {
+            Intent resultData = result.getData();
+            if (resultData != null) {
+                Uri fileData = resultData.getData();
+                if (fileData != null) {
+                    String fileName;
+                    String fileContents;
+                    InputStream inputStream;
+                    try {
+                        // TODO: this doesn't seem to work on Android 4.4.x, for some reason
+                        inputStream = getContentResolver().openInputStream(fileData);
+                        if (inputStream == null) { // Just to keep the linter happy that I'm doing null checks
+                            throw new FileNotFoundException();
+                        }
+                    } catch (FileNotFoundException e) {
+                        Log.e(TAG, "Failed to read imported file", e);
+                        Toast.makeText(this, R.string.file_read_fail, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    try (BufferedSource in = Okio.buffer(Okio.source(inputStream))) {
+                        fileContents = in.readUtf8();
+                    } catch (IOException e) {
+                        Log.e(TAG, "Failed to read imported file", e);
+                        Toast.makeText(this, R.string.file_read_fail, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    fileName = FileOperation.getFileName(fileData, getApplicationContext());
+                    if (!fileName.endsWith(EXT_CONF) ) {
+                        Toast.makeText(this, R.string.profile_name_ext, Toast.LENGTH_SHORT).show();
+                    } else {
+                        vfileContents.setText(fileContents);
+                    }
+                }
+            }
+        }
+    });
+
+
     private void importExternalFile() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
@@ -176,43 +177,22 @@ public class ProfileEditActivity extends AppCompatActivity {
         importFileRequestLauncher.launch(Intent.createChooser(intent, getString(R.string.title_activity_profile_create)));
     }
 
-    // Get the file name for importing a file from a Uri
-    private String getFileName(Uri uri) {
-        String result = null;
-        if ("content".equals(uri.getScheme())) {
-            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                }
-            }
-        }
-        if (result == null) {
-            result = Objects.requireNonNull(uri.getPath());
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        // remove the file extension from the result
-        return result;
-    }
-
     private void saveFile() {
-        if (fileName == null) {
-            fileName = UUID.randomUUID().toString() + EXT_CONF;
-            typedProfile = true;
+        String fileContents = vfileContents.getText().toString();
+        if (ProfileDB.parseProfile(fileContents)) {
+            try {
+                ProfileDB.saveProfile(fileContents, getApplicationContext(), position);
+            } catch (IOException e) {
+                Log.e(TAG, "Failed sslsockspro profile writing.", e);
+                Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } else {
+            Log.e(TAG, "file content is wrong");
+            //Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
+            return;
         }
-        File file = new File(getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName);
-        try (BufferedSink out = Okio.buffer(Okio.sink(file))) {
-            String pendingContent = vfileContents.getText().toString();
-            out.writeUtf8(pendingContent);
-            out.close();
-            setResult(RESULT_OK);
-        } catch (IOException e) {
-            Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Failed SSLSocks" + EXT_CONF + "file writing: ", e);
-        }
-        if (importFlag | typedProfile) {
+        if (position == NEW_PROFILE) {
             Toast.makeText(this, R.string.action_profile_added, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, R.string.action_profile_edited, Toast.LENGTH_SHORT).show();

@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2017-2021 comp500
+ * Modified by WOMAN-LIFE-FREEDOM 2022
+ * (First release: 2017-2021 comp500)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,6 @@ package link.infra.sslsockspro.gui.activities;
 
 import static link.infra.sslsockspro.Constants.APP_LOG;
 import static link.infra.sslsockspro.Constants.EXT_CONF;
-import static link.infra.sslsockspro.Constants.EXT_XML;
 import static link.infra.sslsockspro.Constants.LAST_SELECTED_PROFILE;
 import static link.infra.sslsockspro.Constants.LOG_ISO;
 import static link.infra.sslsockspro.Constants.LOG_LEVEL_DEFAULT;
@@ -33,7 +33,9 @@ import static link.infra.sslsockspro.Constants.LOG_NONE;
 import static link.infra.sslsockspro.Constants.LOG_SHORT;
 import static link.infra.sslsockspro.Constants.PROFILES_DIR;
 import static link.infra.sslsockspro.Constants.SERVICE_DIR;
+import static link.infra.sslsockspro.database.ProfileDB.NEW_PROFILE;
 import static link.infra.sslsockspro.gui.fragments.KeyEditActivity.ARG_EXISTING_FILE_NAME;
+import static link.infra.sslsockspro.gui.fragments.ProfileEditActivity.ARG_POSITION;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -136,16 +138,19 @@ public class MainActivity extends AppCompatActivity
 	private static boolean requestsDisabled = false;
 	private static boolean autoConnectFlag = false;
 
-	// for importing profile
-	//private String fileContents;
-
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		if (setupServiceDir(getApplicationContext())) {
 			//stunnelVersionStringPrivate.postValue(StunnelService.checkStunnelVersion(getApplicationContext()));
 			stunnelVersionStringPrivate.postValue("5.67");
 		}
+
+		try {
+			ProfileDB.loadProfilesFromDatabase(getApplicationContext());
+		} catch (IOException e) {
+			Log.e(TAG, "Error reading the database", e);
+		}
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
@@ -232,6 +237,7 @@ public class MainActivity extends AppCompatActivity
 
 		if (id == R.id.action_add_profile) {
 			Intent intent = new Intent(this, ProfileEditActivity.class);
+			intent.putExtra(ARG_POSITION, NEW_PROFILE);
 			profileEditRequestLauncher.launch(intent);
 			return true;
 		}
@@ -319,9 +325,9 @@ public class MainActivity extends AppCompatActivity
 	protected void onResume() {
 		super.onResume();
 		StunnelService.checkStatus(this);
-		if (profilesFragment != null) {
-			profilesFragment.get().profileUpdateList(getApplicationContext());
-		}
+//		if (profilesFragment != null) {
+//			profilesFragment.get().profileUpdateList(getApplicationContext());
+//		}
 	}
 
 	@Override
@@ -351,7 +357,7 @@ public class MainActivity extends AppCompatActivity
 
 	public void onProfileEdit(int position) {
 		Intent intent = new Intent(MainActivity.this, ProfileEditActivity.class);
-		intent.putExtra(ARG_EXISTING_FILE_NAME, ProfileDB.getFiles().get(position));
+		intent.putExtra(ARG_POSITION, position);
 		profileEditRequestLauncher.launch(intent);
 	}
 
@@ -360,14 +366,14 @@ public class MainActivity extends AppCompatActivity
 			if ( profilesFragment != null) {
 				ProfileFragment frag = profilesFragment.get();
 				if (frag != null) {
-					frag.profileUpdateList(this); // Ensure list is up to date
+//					frag.profileUpdateList(this); // Ensure list is up to date
 				}
 			}
 		}
 	});
 
 	public void onProfileDelete(int position) {
-		String profile = ProfileDB.getFiles().get(position);
+		String profile = ProfileDB.getFile(position);
 		if (profile != null) {
 			File existingFile = new File(getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + profile);
 			if (!existingFile.exists()) {
@@ -384,7 +390,6 @@ public class MainActivity extends AppCompatActivity
 		}
 		ProfileDB.remove(position);
 	}
-
 
 	public void onProfileSelect(int position) {
 		prefsEditor.putInt(LAST_SELECTED_PROFILE, ProfileDB.getPosition());
@@ -554,7 +559,7 @@ public class MainActivity extends AppCompatActivity
 					}
 					if (ProfileDB.parseProfile(fileContents)) {
 						try {
-							ProfileDB.saveProfile(fileContents, getApplicationContext());
+							ProfileDB.saveProfile(fileContents, getApplicationContext(), NEW_PROFILE);
 						} catch (IOException e) {
 							Log.e(TAG, "Failed sslsockspro profile writing.", e);
 							Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
@@ -566,7 +571,7 @@ public class MainActivity extends AppCompatActivity
 						return;
 					}
 					Toast.makeText(this, R.string.action_profile_added, Toast.LENGTH_SHORT).show();
-					profilesFragment.get().profileUpdateList(getApplicationContext());
+//					profilesFragment.get().profileUpdateList(getApplicationContext());
 				}
 			}
 		}
