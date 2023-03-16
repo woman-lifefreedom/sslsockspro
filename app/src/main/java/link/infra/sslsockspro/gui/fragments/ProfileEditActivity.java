@@ -57,13 +57,19 @@ import okio.BufferedSource;
 import okio.Okio;
 
 public class ProfileEditActivity extends AppCompatActivity {
-    private EditText vFileContents;
-    public static final String ARG_POSITION= "POSITION";
-    public static final String ARG_DELETED= "DELETED";
-    private static int position;
 
     private static final String TAG = ProfileEditActivity.class.getSimpleName();
+    private EditText vFileContents;
     private boolean showDelete = true;
+    private static int position;
+    private static int action;
+
+    public static final String ARG_POSITION= "POSITION";
+    public static final String ARG_ACTION= "ACTION";
+    public static final int ACTION_DELETED = 0;
+    public static final int ACTION_IMPORTED = 1;
+    public static final int ACTION_EDITED = 2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +90,10 @@ public class ProfileEditActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(R.string.title_activity_profile_create);
             findViewById(R.id.import_button).setVisibility(View.VISIBLE);
             showDelete = false;
+            action = ACTION_IMPORTED;
             invalidateOptionsMenu();
         } else {
+            action = ACTION_EDITED;
             openFile();
         }
         findViewById(R.id.import_button).setOnClickListener(view -> importExternalFile());
@@ -113,6 +121,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         if (id == R.id.action_save) {
 //            resultIntent.putExtra("some_key", "String data");
             saveFile();
+            resultIntent.putExtra(ARG_ACTION, action);
             setResult(RESULT_OK,resultIntent);
             finish();
             return true;
@@ -125,7 +134,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         if (id == R.id.action_delete) {
             try {
                 if (ProfileDB.removeProfile(getApplicationContext(),position)) {
-                    resultIntent.putExtra(ARG_DELETED, true);
+                    resultIntent.putExtra(ARG_ACTION, ACTION_DELETED);
                     setResult(RESULT_OK,resultIntent);
                 } else {
                     setResult(RESULT_CANCELED);

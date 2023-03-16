@@ -39,10 +39,8 @@ import link.infra.sslsockspro.R;
 
 public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecyclerViewAdapter.ViewHolder> {
 
-//    public final List<String> mRemarks;
-//    public final List<String> mServers;
     private final ProfileFragment.OnProfileFragmentInteractionListener mListener;
-    private final OnSetView setView;
+    public final OnSetView setView;
     private static final long CLICK_TIME_INTERVAL = 100;
     private long mLastClickTime;
 
@@ -50,8 +48,6 @@ public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecy
 
     public ProfileRecyclerViewAdapter(ProfileFragment.OnProfileFragmentInteractionListener listener,
                                       OnSetView setView) {
-//        this.mRemarks = mRemarks;
-//        this.mServers = mServers;
         this.mListener = listener;
         this.setView = setView;
     }
@@ -106,8 +102,6 @@ public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecy
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-//        holder.mRemarkView.setText(mRemarks.get(position));
-//        holder.mServerView.setText(mServers.get(position));
         holder.mRemarkView.setText(ProfileDB.getRemark(position));
         holder.mServerView.setText(ProfileDB.getHost(position, 0));
 

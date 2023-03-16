@@ -78,8 +78,6 @@ public class ProfileFragment extends Fragment {
 
 	private RecyclerView recyclerView;
 	private TextView emptyView;
-//	private final List<String> remarks = ProfileDB.getRemarks();
-//	private final List<String> servers = ProfileDB.getServers();
 	private TextView infoBox;
 
 	public ProfileFragment() {
@@ -105,6 +103,7 @@ public class ProfileFragment extends Fragment {
 		//set the adapter
 		Context context = view.getContext();
 
+		emptyView = view.findViewById(R.id.profile_empty_view);
 		recyclerView = view.findViewById(R.id.profile_list);
 		recyclerView.setLayoutManager(new LinearLayoutManager(context));
 		recyclerView.setAdapter(new ProfileRecyclerViewAdapter(mListener, new ProfileRecyclerViewAdapter.OnSetView() {
@@ -121,12 +120,10 @@ public class ProfileFragment extends Fragment {
 			}
 		}));
 
-		emptyView = view.findViewById(R.id.profile_empty_view);
+		updateView();
 
 		infoBox = view.findViewById(R.id.info_box);
 		infoBox.setText(R.string.run_status_not_running);
-
-//		profileUpdateList(context);
 
 		MainActivity.toggle.observe(getViewLifecycleOwner(), bool -> {
 			if (bool) {
@@ -168,11 +165,6 @@ public class ProfileFragment extends Fragment {
 	}
 
 	/**
-	 * This is a factory method to get a unique instance of This class
-	 */
-
-
-	/**
 	 * This interface must be implemented by activities that contain this
 	 * fragment to allow an interaction in this fragment to be communicated
 	 * to the activity and potentially other fragments contained in that
@@ -187,6 +179,16 @@ public class ProfileFragment extends Fragment {
 		void onProfileEdit(int position);
 		void onProfileDelete(int position);
 		void onProfileSelect(int position);
+	}
+
+	public void updateView() {
+		if (ProfileDB.getSize() == 0) {
+			recyclerView.setVisibility(View.GONE);
+			emptyView.setVisibility(View.VISIBLE);
+		} else {
+			recyclerView.setVisibility(View.VISIBLE);
+			emptyView.setVisibility(View.GONE);
+		}
 	}
 
 //	public void profileUpdateList(Context context) {

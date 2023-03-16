@@ -36,7 +36,10 @@ import static link.infra.sslsockspro.Constants.PROFILE_DATABASE;
 import static link.infra.sslsockspro.Constants.SERVICE_DIR;
 import static link.infra.sslsockspro.database.ProfileDB.NEW_PROFILE;
 import static link.infra.sslsockspro.gui.fragments.KeyEditActivity.ARG_EXISTING_FILE_NAME;
-import static link.infra.sslsockspro.gui.fragments.ProfileEditActivity.ARG_DELETED;
+import static link.infra.sslsockspro.gui.fragments.ProfileEditActivity.ACTION_DELETED;
+import static link.infra.sslsockspro.gui.fragments.ProfileEditActivity.ACTION_EDITED;
+import static link.infra.sslsockspro.gui.fragments.ProfileEditActivity.ACTION_IMPORTED;
+import static link.infra.sslsockspro.gui.fragments.ProfileEditActivity.ARG_ACTION;
 import static link.infra.sslsockspro.gui.fragments.ProfileEditActivity.ARG_POSITION;
 
 import android.app.NotificationChannel;
@@ -362,14 +365,22 @@ public class MainActivity extends AppCompatActivity
 
 	private final ActivityResultLauncher<Intent> profileEditRequestLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
 		if (result.getResultCode() == RESULT_OK) {
-			int position = result.getData().getIntExtra(ARG_POSITION, NEW_PROFILE);
-			boolean deleted = Objects.requireNonNull(result.getData()).getBooleanExtra(ARG_DELETED, false);
+			int position = Objects.requireNonNull(result.getData()).getIntExtra(ARG_POSITION, NEW_PROFILE);
+			int action = Objects.requireNonNull(result.getData()).getIntExtra(ARG_ACTION, ACTION_EDITED);
 			if (position != NEW_PROFILE) {
-				if (deleted) {
+				if (action == ACTION_DELETED) {
 					Objects.requireNonNull(profilesFragment.get().getRecyclerView().getAdapter()).notifyItemRemoved(position);
+					if (ProfileDB.getSize() == 0) {
+						profilesFragment.get().updateView();
+					}
 				} else {
 					Objects.requireNonNull(profilesFragment.get().getRecyclerView().getAdapter()).notifyItemChanged(position);
 				}
+			} else {
+				if (ProfileDB.getSize() == 1) {
+					profilesFragment.get().updateView();
+				}
+				Objects.requireNonNull(profilesFragment.get().getRecyclerView().getAdapter()).notifyItemInserted(ProfileDB.getSize()-1);
 			}
 		}
 	});
@@ -551,17 +562,19 @@ public class MainActivity extends AppCompatActivity
 					if (ProfileDB.parseProfile(fileContents)) {
 						try {
 							ProfileDB.saveProfile(fileContents, getApplicationContext(), NEW_PROFILE);
+							if (ProfileDB.getSize() == 1) {
+								profilesFragment.get().updateView();
+							}
+							Objects.requireNonNull(profilesFragment.get().getRecyclerView().getAdapter()).notifyItemInserted(ProfileDB.getSize()-1);
+							Toast.makeText(this, R.string.action_profile_added, Toast.LENGTH_SHORT).show();
 						} catch (IOException e) {
 							Log.e(TAG, "Failed sslsockspro profile writing.", e);
 							Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
-							return;
 						}
 					} else {
 						Log.e(TAG, "file content is wrong");
 						//Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
-						return;
 					}
-					Toast.makeText(this, R.string.action_profile_added, Toast.LENGTH_SHORT).show();
 //					profilesFragment.get().profileUpdateList(getApplicationContext());
 				}
 			}
@@ -571,7 +584,6 @@ public class MainActivity extends AppCompatActivity
 	public Context getContext() {
 		return getApplicationContext();
 	}
-
 
 	private boolean setupServiceDir(Context context) {
 		boolean sd = true ,pd = true ,lf = true;
