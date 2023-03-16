@@ -36,6 +36,7 @@ import static link.infra.sslsockspro.Constants.PROFILE_DATABASE;
 import static link.infra.sslsockspro.Constants.SERVICE_DIR;
 import static link.infra.sslsockspro.database.ProfileDB.NEW_PROFILE;
 import static link.infra.sslsockspro.gui.fragments.KeyEditActivity.ARG_EXISTING_FILE_NAME;
+import static link.infra.sslsockspro.gui.fragments.ProfileEditActivity.ARG_DELETED;
 import static link.infra.sslsockspro.gui.fragments.ProfileEditActivity.ARG_POSITION;
 
 import android.app.NotificationChannel;
@@ -357,16 +358,17 @@ public class MainActivity extends AppCompatActivity
 		Intent intent = new Intent(MainActivity.this, ProfileEditActivity.class);
 		intent.putExtra(ARG_POSITION, position);
 		profileEditRequestLauncher.launch(intent);
-		// TODO: notify item change
-//		ProfileRecyclerViewAdapter.notifyItemChanged(position);
 	}
 
 	private final ActivityResultLauncher<Intent> profileEditRequestLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
 		if (result.getResultCode() == RESULT_OK) {
-			if ( profilesFragment != null) {
-				ProfileFragment frag = profilesFragment.get();
-				if (frag != null) {
-//					frag.profileUpdateList(this); // Ensure list is up to date
+			int position = result.getData().getIntExtra(ARG_POSITION, NEW_PROFILE);
+			boolean deleted = Objects.requireNonNull(result.getData()).getBooleanExtra(ARG_DELETED, false);
+			if (position != NEW_PROFILE) {
+				if (deleted) {
+					Objects.requireNonNull(profilesFragment.get().getRecyclerView().getAdapter()).notifyItemRemoved(position);
+				} else {
+					Objects.requireNonNull(profilesFragment.get().getRecyclerView().getAdapter()).notifyItemChanged(position);
 				}
 			}
 		}

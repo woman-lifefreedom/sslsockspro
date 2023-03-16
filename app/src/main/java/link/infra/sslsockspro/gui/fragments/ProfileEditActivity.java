@@ -52,12 +52,14 @@ import java.util.Objects;
 import link.infra.sslsockspro.R;
 import link.infra.sslsockspro.database.FileOperation;
 import link.infra.sslsockspro.database.ProfileDB;
+import link.infra.sslsockspro.gui.activities.MainActivity;
 import okio.BufferedSource;
 import okio.Okio;
 
 public class ProfileEditActivity extends AppCompatActivity {
     private EditText vFileContents;
     public static final String ARG_POSITION= "POSITION";
+    public static final String ARG_DELETED= "DELETED";
     private static int position;
 
     private static final String TAG = ProfileEditActivity.class.getSimpleName();
@@ -105,9 +107,13 @@ public class ProfileEditActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        resultIntent.putExtra(ARG_POSITION, position);
 
         if (id == R.id.action_save) {
+//            resultIntent.putExtra("some_key", "String data");
             saveFile();
+            setResult(RESULT_OK,resultIntent);
             finish();
             return true;
         }
@@ -119,12 +125,14 @@ public class ProfileEditActivity extends AppCompatActivity {
         if (id == R.id.action_delete) {
             try {
                 if (ProfileDB.removeProfile(getApplicationContext(),position)) {
-                    setResult(RESULT_OK);
+                    resultIntent.putExtra(ARG_DELETED, true);
+                    setResult(RESULT_OK,resultIntent);
                 } else {
                     setResult(RESULT_CANCELED);
                 }
             } catch (IOException e) {
                 Log.e(TAG, "failed to write to database", e);
+                setResult(RESULT_CANCELED);
             }
             finish();
             return true;
@@ -179,25 +187,26 @@ public class ProfileEditActivity extends AppCompatActivity {
         importFileRequestLauncher.launch(Intent.createChooser(intent, getString(R.string.title_activity_profile_create)));
     }
 
-    private void saveFile() {
+    private boolean saveFile() {
         String fileContents = vFileContents.getText().toString();
         if (ProfileDB.parseProfile(fileContents)) {
             try {
                 ProfileDB.saveProfile(fileContents, getApplicationContext(), position);
+                if (position == NEW_PROFILE) {
+                    Toast.makeText(this, R.string.action_profile_added, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, R.string.action_profile_edited, Toast.LENGTH_SHORT).show();
+                }
+                return true;
             } catch (IOException e) {
                 Log.e(TAG, "Failed sslsockspro profile writing.", e);
                 Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
-                return;
+                return false;
             }
         } else {
             Log.e(TAG, "file content is wrong");
-            //Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (position == NEW_PROFILE) {
-            Toast.makeText(this, R.string.action_profile_added, Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, R.string.action_profile_edited, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
+            return false;
         }
     }
 
