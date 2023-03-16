@@ -29,10 +29,8 @@ import static link.infra.sslsockspro.Constants.PROFILES_DIR;
 import static link.infra.sslsockspro.database.ProfileDB.NEW_PROFILE;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,20 +48,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
-import java.util.UUID;
 
 import link.infra.sslsockspro.R;
 import link.infra.sslsockspro.database.FileOperation;
 import link.infra.sslsockspro.database.ProfileDB;
-import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
 
 public class ProfileEditActivity extends AppCompatActivity {
-    private EditText vfileContents;
-    private String fileName = null;
-    private boolean importFlag = false;
-    private boolean typedProfile = false;
+    private EditText vFileContents;
     public static final String ARG_POSITION= "POSITION";
     private static int position;
 
@@ -79,7 +72,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
 
-        vfileContents = findViewById(R.id.file_contents);
+        vFileContents = findViewById(R.id.file_contents);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -124,7 +117,16 @@ public class ProfileEditActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.action_delete) {
-            deleteFile();
+            try {
+                if (ProfileDB.removeProfile(getApplicationContext(),position)) {
+                    setResult(RESULT_OK);
+                } else {
+                    setResult(RESULT_CANCELED);
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "failed to write to database", e);
+            }
+            finish();
             return true;
         }
 
@@ -162,7 +164,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                     if (!fileName.endsWith(EXT_CONF) ) {
                         Toast.makeText(this, R.string.profile_name_ext, Toast.LENGTH_SHORT).show();
                     } else {
-                        vfileContents.setText(fileContents);
+                        vFileContents.setText(fileContents);
                     }
                 }
             }
@@ -178,7 +180,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     }
 
     private void saveFile() {
-        String fileContents = vfileContents.getText().toString();
+        String fileContents = vFileContents.getText().toString();
         if (ProfileDB.parseProfile(fileContents)) {
             try {
                 ProfileDB.saveProfile(fileContents, getApplicationContext(), position);
@@ -199,33 +201,35 @@ public class ProfileEditActivity extends AppCompatActivity {
         }
     }
 
-    private void deleteFile() {
-        if (fileName != null) {
-            File existingFile = new File(getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName );
-            if (!existingFile.exists()) {
-                Toast.makeText(this, R.string.file_delete_nexist, Toast.LENGTH_SHORT).show();
-                setResult(RESULT_CANCELED);
-                finish();
-                return;
-            }
-            if (!existingFile.delete()) {
-                Toast.makeText(this, R.string.file_delete_failed, Toast.LENGTH_SHORT).show();
-            }
-            setResult(RESULT_OK);
-            finish();
-        } else {
-            Toast.makeText(this, R.string.file_delete_err, Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private void deleteFile() {
+//
+//        if (fileName != null) {
+//            File existingFile = new File(getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName );
+//            if (!existingFile.exists()) {
+//                Toast.makeText(this, R.string.file_delete_nexist, Toast.LENGTH_SHORT).show();
+//                setResult(RESULT_CANCELED);
+//                finish();
+//                return;
+//            }
+//            if (!existingFile.delete()) {
+//                Toast.makeText(this, R.string.file_delete_failed, Toast.LENGTH_SHORT).show();
+//            }
+//            setResult(RESULT_OK);
+//            finish();
+//        } else {
+//            Toast.makeText(this, R.string.file_delete_err, Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     private void openFile() {
+        String fileName = ProfileDB.getFile(position);
         File file = new File(getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName);
         try (BufferedSource in = Okio.buffer(Okio.source(file))) {
-            vfileContents.setText(in.readUtf8());
+            vFileContents.setText(in.readUtf8());
         } catch (IOException e) {
             Log.e(TAG, "Failed to read .conf file", e);
             Toast.makeText(this, R.string.file_read_fail, Toast.LENGTH_SHORT).show();
-            vfileContents.getText().clear();
+            vFileContents.getText().clear();
         }
     }
 }

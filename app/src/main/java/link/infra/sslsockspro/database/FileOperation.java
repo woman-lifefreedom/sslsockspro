@@ -23,15 +23,22 @@
 
 package link.infra.sslsockspro.database;
 
+import static link.infra.sslsockspro.Constants.PROFILES_DIR;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.OpenableColumns;
+import android.widget.Toast;
 
+import java.io.File;
 import java.util.Objects;
+
+import link.infra.sslsockspro.R;
 
 public class FileOperation {
 
+    // Get the file name for importing a file from a Uri
     public static String getFileName(Uri uri, Context context) {
         String result = null;
         if ("content".equals(uri.getScheme())) {
@@ -51,5 +58,4 @@ public class FileOperation {
         // remove the file extension from the result
         return result;
     }
-
 }

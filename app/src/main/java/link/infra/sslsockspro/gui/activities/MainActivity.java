@@ -32,6 +32,7 @@ import static link.infra.sslsockspro.Constants.LOG_LEVEL_DEFAULT;
 import static link.infra.sslsockspro.Constants.LOG_NONE;
 import static link.infra.sslsockspro.Constants.LOG_SHORT;
 import static link.infra.sslsockspro.Constants.PROFILES_DIR;
+import static link.infra.sslsockspro.Constants.PROFILE_DATABASE;
 import static link.infra.sslsockspro.Constants.SERVICE_DIR;
 import static link.infra.sslsockspro.database.ProfileDB.NEW_PROFILE;
 import static link.infra.sslsockspro.gui.fragments.KeyEditActivity.ARG_EXISTING_FILE_NAME;
@@ -83,6 +84,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import link.infra.sslsockspro.database.FileOperation;
 import link.infra.sslsockspro.database.ProfileDB;
 import link.infra.sslsockspro.R;
 import link.infra.sslsockspro.gui.OpenVPNIntegrationHandler;
@@ -93,6 +95,7 @@ import link.infra.sslsockspro.gui.fragments.AboutFragment;
 import link.infra.sslsockspro.gui.fragments.LogFragment;
 import link.infra.sslsockspro.gui.fragments.ProfileEditActivity;
 import link.infra.sslsockspro.gui.fragments.ProfileFragment;
+import link.infra.sslsockspro.gui.fragments.ProfileRecyclerViewAdapter;
 import link.infra.sslsockspro.service.StunnelService;
 import okio.BufferedSink;
 import okio.BufferedSource;
@@ -144,12 +147,7 @@ public class MainActivity extends AppCompatActivity
 			//stunnelVersionStringPrivate.postValue(StunnelService.checkStunnelVersion(getApplicationContext()));
 			stunnelVersionStringPrivate.postValue("5.67");
 		}
-
-		try {
-			ProfileDB.loadProfilesFromDatabase(getApplicationContext());
-		} catch (IOException e) {
-			Log.e(TAG, "Error reading the database", e);
-		}
+		loadDatabase();
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
@@ -359,6 +357,8 @@ public class MainActivity extends AppCompatActivity
 		Intent intent = new Intent(MainActivity.this, ProfileEditActivity.class);
 		intent.putExtra(ARG_POSITION, position);
 		profileEditRequestLauncher.launch(intent);
+		// TODO: notify item change
+//		ProfileRecyclerViewAdapter.notifyItemChanged(position);
 	}
 
 	private final ActivityResultLauncher<Intent> profileEditRequestLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -373,22 +373,11 @@ public class MainActivity extends AppCompatActivity
 	});
 
 	public void onProfileDelete(int position) {
-		String profile = ProfileDB.getFile(position);
-		if (profile != null) {
-			File existingFile = new File(getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + profile);
-			if (!existingFile.exists()) {
-				Toast.makeText(this, R.string.file_delete_nexist, Toast.LENGTH_SHORT).show();
-				setResult(RESULT_CANCELED);
-				return;
-			}
-			if (!existingFile.delete()) {
-				Toast.makeText(this, R.string.file_delete_failed, Toast.LENGTH_SHORT).show();
-			}
-			setResult(RESULT_OK);
-		} else {
-			Toast.makeText(this, R.string.file_delete_err, Toast.LENGTH_SHORT).show();
+		try {
+			ProfileDB.removeProfile(getApplicationContext(),position);
+		} catch (IOException e) {
+			Log.e(TAG, "failed to write to database", e);
 		}
-		ProfileDB.remove(position);
 	}
 
 	public void onProfileSelect(int position) {
@@ -552,7 +541,7 @@ public class MainActivity extends AppCompatActivity
 						Toast.makeText(this, R.string.file_read_fail, Toast.LENGTH_SHORT).show();
 						return;
 					}
-					String fileName = getFileName(fileData);
+					String fileName = FileOperation.getFileName(fileData, getApplicationContext());
 					if ( !fileName.endsWith(EXT_CONF) ) {
 						Toast.makeText(this, R.string.profile_name_ext, Toast.LENGTH_SHORT).show();
 						return;
@@ -582,7 +571,7 @@ public class MainActivity extends AppCompatActivity
 	}
 
 
-	boolean setupServiceDir(Context context) {
+	private boolean setupServiceDir(Context context) {
 		boolean sd = true ,pd = true ,lf = true;
 		String serviceDirPath = context.getFilesDir().getAbsolutePath() + "/" +SERVICE_DIR;
 		File serviceDir = new File(serviceDirPath);
@@ -606,25 +595,43 @@ public class MainActivity extends AppCompatActivity
 		return (sd && pd && lf);
 	}
 
-	// Get the file name for importing a file from a Uri
-	private String getFileName(Uri uri) {
-		String result = null;
-		if ("content".equals(uri.getScheme())) {
-			try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
-				if (cursor != null && cursor.moveToFirst()) {
-					result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-				}
+	private void loadDatabase() {
+		File db = new File(getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + PROFILE_DATABASE);
+		if (!db.exists()) {
+			try {
+				ProfileDB.updateProfilesFromConfigFiles(getApplicationContext());
+			} catch (IOException e) {
+				Log.e(TAG, "File Operation Error", e);
+			}
+		} else {
+			try {
+				ProfileDB.loadProfilesFromDatabase(getApplicationContext());
+			} catch (IOException e) {
+				Log.e(TAG, "Error reading the database", e);
 			}
 		}
-		if (result == null) {
-			result = Objects.requireNonNull(uri.getPath());
-			int cut = result.lastIndexOf('/');
-			if (cut != -1) {
-				result = result.substring(cut + 1);
-			}
-		}
-		return result;
 	}
+
+
+//	// Get the file name for importing a file from a Uri
+//	private String getFileName(Uri uri) {
+//		String result = null;
+//		if ("content".equals(uri.getScheme())) {
+//			try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+//				if (cursor != null && cursor.moveToFirst()) {
+//					result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+//				}
+//			}
+//		}
+//		if (result == null) {
+//			result = Objects.requireNonNull(uri.getPath());
+//			int cut = result.lastIndexOf('/');
+//			if (cut != -1) {
+//				result = result.substring(cut + 1);
+//			}
+//		}
+//		return result;
+//	}
 
 //	private void saveFile() {
 //		String fileName = UUID.randomUUID().toString();

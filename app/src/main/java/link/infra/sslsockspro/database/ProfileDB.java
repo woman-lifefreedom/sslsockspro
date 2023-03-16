@@ -34,6 +34,7 @@ import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_OVPN_RUN;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_REMARK;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -54,6 +55,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import link.infra.sslsockspro.R;
 import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
@@ -179,6 +181,7 @@ public class ProfileDB {
                 addProfileFromConfigFile(context,fileName);
             }
         }
+        saveProfilesToDatabase(context);
     }
 
     /**
@@ -325,16 +328,16 @@ public class ProfileDB {
         return mProfileItems.get(position).stunnelServiceOptions.get(serviceIdx).connectPort;
     }
 
-    public static void setPosition(int position) {
-        ProfileDB.position = position;
-    }
-
     public static String getOvpn() {
         return mProfileItems.get(position).stunnelGlobalOptions.ovpnProfile;
     }
 
     public static Boolean getRunOvpn() {
         return mProfileItems.get(position).stunnelGlobalOptions.runOvpn;
+    }
+
+    public static void setPosition(int position) {
+        ProfileDB.position = position;
     }
 
     public static int getPosition() {
@@ -355,6 +358,27 @@ public class ProfileDB {
 
     public static void remove(int position) {
         mProfileItems.remove(position);
+    }
+
+    public static boolean removeProfile(Context context, int position) throws IOException {
+        String fileName = getFile(position);
+        if (fileName == null) {
+            Toast.makeText(context, R.string.file_delete_err, Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            File existingFile = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName);
+            if (!existingFile.exists()) {
+                Toast.makeText(context, R.string.file_delete_nexist, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            if (!existingFile.delete()) {
+                Toast.makeText(context, R.string.file_delete_failed, Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            mProfileItems.remove(position);
+            saveProfilesToDatabase(context);
+            return true;
+        }
     }
 
     public static int getLastSelectedPosition() {
