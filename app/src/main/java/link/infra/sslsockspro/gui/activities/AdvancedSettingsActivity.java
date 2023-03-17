@@ -45,58 +45,58 @@ import link.infra.sslsockspro.gui.activities.MainActivity;
 
 public class AdvancedSettingsActivity extends AppCompatActivity {
 
-	static Intent intent;
+    static Intent intent;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_advanced_settings);
-		Toolbar toolbar = findViewById(R.id.toolbar);
-		setSupportActionBar(toolbar);
-		intent = getIntent();
-		Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_advanced_settings);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        intent = getIntent();
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+    }
 
-	public static class AdvancedSettingsActivityFragment extends PreferenceFragmentCompat {
-		@Override
-		public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-			setPreferencesFromResource(R.xml.advanced_settings, rootKey);
+    public static class AdvancedSettingsActivityFragment extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.advanced_settings, rootKey);
 
-			Preference appVersionPreference = findPreference("version");
-			if (appVersionPreference != null) {
-				final String versionString = BuildConfig.VERSION_NAME + " (" + BuildConfig.VERSION_CODE + ")";
-				appVersionPreference.setSummaryProvider((Preference.SummaryProvider<Preference>) preference -> versionString);
-			}
-		}
+            Preference appVersionPreference = findPreference("version");
+            if (appVersionPreference != null) {
+                final String versionString = BuildConfig.VERSION_NAME + " (" + BuildConfig.VERSION_CODE + ")";
+                appVersionPreference.setSummaryProvider((Preference.SummaryProvider<Preference>) preference -> versionString);
+            }
+        }
 
-		@Override
-		public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-			final Preference stunnelVersionPreference = findPreference("stunnelVersion");
-			String version = MainActivity.stunnelVersionString.getValue();
-			if (stunnelVersionPreference != null && version != null) {
-				stunnelVersionPreference.setSummary(version);
-			}
-			return super.onCreateView(inflater, container, savedInstanceState);
-		}
-	}
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            final Preference stunnelVersionPreference = findPreference("stunnelVersion");
+            String version = MainActivity.stunnelVersionString.getValue();
+            if (stunnelVersionPreference != null && version != null) {
+                stunnelVersionPreference.setSummary(version);
+            }
+            return super.onCreateView(inflater, container, savedInstanceState);
+        }
+    }
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-	}
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-		if (id == android.R.id.home) {
-			finish();
-			return true;
-		}
+        if (id == android.R.id.home) {
+            finish();
+            return true;
+        }
 
-		return super.onOptionsItemSelected(item);
-	}
+        return super.onOptionsItemSelected(item);
+    }
 }

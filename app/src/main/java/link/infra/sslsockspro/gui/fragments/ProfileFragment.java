@@ -73,214 +73,214 @@ import okio.Okio;
  */
 public class ProfileFragment extends Fragment {
 
-	private static final String TAG = ProfileFragment.class.getSimpleName();
-	private OnProfileFragmentInteractionListener mListener;
+    private static final String TAG = ProfileFragment.class.getSimpleName();
+    private OnProfileFragmentInteractionListener mListener;
 
-	private RecyclerView recyclerView;
-	private TextView emptyView;
-	private TextView infoBox;
+    private RecyclerView recyclerView;
+    private TextView emptyView;
+    private TextView infoBox;
 
-	public ProfileFragment() {
-	}
+    public ProfileFragment() {
+    }
 
-	@Override
-	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-							 Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
-		View view = inflater.inflate(R.layout.fragment_profile, container, false);
-		setHasOptionsMenu(true);
-		return view;
-	}
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+        setHasOptionsMenu(true);
+        return view;
+    }
 
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		menu.findItem(R.id.copy_logs).setVisible(false);
-		menu.findItem(R.id.export_logs).setVisible(false);
-	}
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.copy_logs).setVisible(false);
+        menu.findItem(R.id.export_logs).setVisible(false);
+    }
 
-	@Override
-	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-		//set the adapter
-		Context context = view.getContext();
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        //set the adapter
+        Context context = view.getContext();
 
-		emptyView = view.findViewById(R.id.profile_empty_view);
-		recyclerView = view.findViewById(R.id.profile_list);
-		recyclerView.setLayoutManager(new LinearLayoutManager(context));
-		recyclerView.setAdapter(new ProfileRecyclerViewAdapter(mListener, new ProfileRecyclerViewAdapter.OnSetView() {
-			@Override
-			public void setRecyclerView() {
-				recyclerView.setVisibility(View.VISIBLE);
-				emptyView.setVisibility(View.GONE);
-			}
+        emptyView = view.findViewById(R.id.profile_empty_view);
+        recyclerView = view.findViewById(R.id.profile_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setAdapter(new ProfileRecyclerViewAdapter(mListener, new ProfileRecyclerViewAdapter.OnSetView() {
+            @Override
+            public void setRecyclerView() {
+                recyclerView.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
+            }
 
-			@Override
-			public void setEmptyView() {
-				recyclerView.setVisibility(View.GONE);
-				emptyView.setVisibility(View.VISIBLE);
-			}
-		}));
+            @Override
+            public void setEmptyView() {
+                recyclerView.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
+            }
+        }));
 
-		updateView();
+        updateView();
 
-		infoBox = view.findViewById(R.id.info_box);
-		infoBox.setText(R.string.run_status_not_running);
+        infoBox = view.findViewById(R.id.info_box);
+        infoBox.setText(R.string.run_status_not_running);
 
-		MainActivity.toggle.observe(getViewLifecycleOwner(), bool -> {
-			if (bool) {
-				MainActivity.getFabConnect().setBackgroundTintList(getResources().getColorStateList(R.color.fab_connecting));
-				infoBox.setText(R.string.run_status_starting);
-			} else {
-				MainActivity.getFabConnect().setBackgroundTintList(getResources().getColorStateList(R.color.fab_disconnected));
-				infoBox.setText(R.string.run_status_not_running);
-			}
-		});
+        MainActivity.toggle.observe(getViewLifecycleOwner(), bool -> {
+            if (bool) {
+                MainActivity.getFabConnect().setBackgroundTintList(getResources().getColorStateList(R.color.fab_connecting));
+                infoBox.setText(R.string.run_status_starting);
+            } else {
+                MainActivity.getFabConnect().setBackgroundTintList(getResources().getColorStateList(R.color.fab_disconnected));
+                infoBox.setText(R.string.run_status_not_running);
+            }
+        });
 
-		StunnelService.isRunning.observe(getViewLifecycleOwner(), bool -> {
-			if (bool) {
-				MainActivity.getFabConnect().setBackgroundTintList(getResources().getColorStateList(R.color.fab_connected));
-				infoBox.setText(R.string.run_status_running);
-			}
-			else {
-				MainActivity.getFabConnect().setBackgroundTintList(getResources().getColorStateList(R.color.fab_disconnected));
-				infoBox.setText(R.string.run_status_not_running);
-			}
-		});
-	}
+        StunnelService.isRunning.observe(getViewLifecycleOwner(), bool -> {
+            if (bool) {
+                MainActivity.getFabConnect().setBackgroundTintList(getResources().getColorStateList(R.color.fab_connected));
+                infoBox.setText(R.string.run_status_running);
+            }
+            else {
+                MainActivity.getFabConnect().setBackgroundTintList(getResources().getColorStateList(R.color.fab_disconnected));
+                infoBox.setText(R.string.run_status_not_running);
+            }
+        });
+    }
 
-	@Override
-	public void onAttach(@NonNull Context context) {
-		super.onAttach(context);
-		if (context instanceof ProfileFragment.OnProfileFragmentInteractionListener) {
-			mListener = (ProfileFragment.OnProfileFragmentInteractionListener) context;
-		} else {
-			throw new RuntimeException(context.toString()
-					+ " must implement OnListFragmentInteractionListener");
-		}
-	}
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof ProfileFragment.OnProfileFragmentInteractionListener) {
+            mListener = (ProfileFragment.OnProfileFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener");
+        }
+    }
 
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		mListener = null;
-	}
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 
-	/**
-	 * This interface must be implemented by activities that contain this
-	 * fragment to allow an interaction in this fragment to be communicated
-	 * to the activity and potentially other fragments contained in that
-	 * activity.
-	 * <p>
-	 * See the Android Training lesson <a href=
-	 * "http://developer.android.com/training/basics/fragments/communicating.html"
-	 * >Communicating with Other Fragments</a> for more information.
-	 */
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
 
-	public interface OnProfileFragmentInteractionListener {
-		void onProfileEdit(int position);
-		void onProfileDelete(int position);
-		void onProfileSelect(int position);
-	}
+    public interface OnProfileFragmentInteractionListener {
+        void onProfileEdit(int position);
+        void onProfileDelete(int position);
+        void onProfileSelect(int position);
+    }
 
-	public void updateView() {
-		if (ProfileDB.getSize() == 0) {
-			recyclerView.setVisibility(View.GONE);
-			emptyView.setVisibility(View.VISIBLE);
-		} else {
-			recyclerView.setVisibility(View.VISIBLE);
-			emptyView.setVisibility(View.GONE);
-		}
-	}
+    public void updateView() {
+        if (ProfileDB.getSize() == 0) {
+            recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
+    }
 
-//	public void profileUpdateList(Context context) {
-//		//remarks.clear();
-//		//servers.clear();
-//		//ProfileDB.clear();
-//		File folder = new File(context.getFilesDir().getAbsolutePath() + "/" + PROFILES_DIR);
-//		String fileName;
+//    public void profileUpdateList(Context context) {
+//        //remarks.clear();
+//        //servers.clear();
+//        //ProfileDB.clear();
+//        File folder = new File(context.getFilesDir().getAbsolutePath() + "/" + PROFILES_DIR);
+//        String fileName;
 //
-//		// sort the files
-//		File[] files = folder.listFiles();
-//		if (files == null) {
-//			return;
-//		} else {
-//			Arrays.sort(files, new Comparator<File>() {
-//				public int compare(File f1, File f2) {
-//					return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
-//				}
-//			});
-//		}
-//		for (File fileEntry : files) {
-//		//for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
-//			if (fileEntry.getPath().endsWith(EXT_CONF)) { // Only show config files
-//				fileName = fileEntry.getName();
-//				// remove leading whitespace + remove commented + keep empty lines
-//				//String pendingContent = fileContents.replaceAll("(?m)^\\s","").replaceAll("(?m)^#.*", "");
-//				BufferedSource buffFile = null;
-//				try {
-//					buffFile = Okio.buffer(Okio.source(fileEntry));
-//				} catch (FileNotFoundException e) {
-//					e.printStackTrace();
-//				}
-//				Pattern ovpnPattern = Pattern.compile("^[\\s]*(?!#)" + OVPN_PROFILE + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*");
-//				Pattern ovpnRunPattern = Pattern.compile("^[\\s]*(?!#)" + OVPN_RUN + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*");
-//				Pattern remarkPattern = Pattern.compile("^[\\s]*(?!#)" + SSLSOCKS_REMARK + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*");
-//				Pattern serverPattern = Pattern.compile("^[\\s]*(?!#)" + "connect" + "[\\s]*=[\\s]*(.*)[\\s]*");
-//				String line = "";
-//				String ovpnString = "";
-//				String ovpnRunString = "";
-//				String remarkString = "";
-//				String serverString = "";
-//				while (true) {
-//					try {
-//						if (buffFile != null && ((line = buffFile.readUtf8Line()) == null)) break;
-//					} catch (IOException e) {
-//						Log.e(TAG, "File error", e);
-//					}
-//					Matcher ovpnMatcher = ovpnPattern.matcher(line);
-//					Matcher ovpnRunMatcher = ovpnRunPattern.matcher(line);
-//					Matcher remarkMatcher = remarkPattern.matcher(line);
-//					Matcher serverMatcher = serverPattern.matcher(line);
-//					if (ovpnMatcher.find()) {
-//						ovpnString = ovpnMatcher.group(1);
-//					}
-//					if (ovpnRunMatcher.find()) {
-//						ovpnRunString = ovpnRunMatcher.group(1);
-//					}
-//					if (remarkMatcher.find()) {
-//						remarkString = remarkMatcher.group(1);
-//					}
-//					if (serverMatcher.find()) {
-//						serverString = serverMatcher.group(1);
-//					}
-//				}
-//				if (ovpnRunString != null) {
-//					if (ovpnRunString.equals("yes"))
-//					{
-//						ProfileDB.addDB(fileName,remarkString,serverString ,ovpnString, TRUE);
-//					} else {
-//						ProfileDB.addDB(fileName,remarkString,serverString,ovpnString, FALSE);
-//					}
-//				}
-//			}
-//		}
-//		// Show text if there are no items
-//		//if (remarks.isEmpty()) {
-//		//	recyclerView.setVisibility(View.GONE);
-//		//	emptyView.setVisibility(View.VISIBLE);
-//		//} else {
-//		//	recyclerView.setVisibility(View.VISIBLE);
-//		//	emptyView.setVisibility(View.GONE);
-//		//}
-//		Objects.requireNonNull(recyclerView.getAdapter()).notifyDataSetChanged();
-//	}
+//        // sort the files
+//        File[] files = folder.listFiles();
+//        if (files == null) {
+//            return;
+//        } else {
+//            Arrays.sort(files, new Comparator<File>() {
+//                public int compare(File f1, File f2) {
+//                    return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
+//                }
+//            });
+//        }
+//        for (File fileEntry : files) {
+//        //for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
+//            if (fileEntry.getPath().endsWith(EXT_CONF)) { // Only show config files
+//                fileName = fileEntry.getName();
+//                // remove leading whitespace + remove commented + keep empty lines
+//                //String pendingContent = fileContents.replaceAll("(?m)^\\s","").replaceAll("(?m)^#.*", "");
+//                BufferedSource buffFile = null;
+//                try {
+//                    buffFile = Okio.buffer(Okio.source(fileEntry));
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//                Pattern ovpnPattern = Pattern.compile("^[\\s]*(?!#)" + OVPN_PROFILE + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*");
+//                Pattern ovpnRunPattern = Pattern.compile("^[\\s]*(?!#)" + OVPN_RUN + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*");
+//                Pattern remarkPattern = Pattern.compile("^[\\s]*(?!#)" + SSLSOCKS_REMARK + "[\\s]*=[\\s]*([a-zA-Z0-9_-]+)[\\s]*");
+//                Pattern serverPattern = Pattern.compile("^[\\s]*(?!#)" + "connect" + "[\\s]*=[\\s]*(.*)[\\s]*");
+//                String line = "";
+//                String ovpnString = "";
+//                String ovpnRunString = "";
+//                String remarkString = "";
+//                String serverString = "";
+//                while (true) {
+//                    try {
+//                        if (buffFile != null && ((line = buffFile.readUtf8Line()) == null)) break;
+//                    } catch (IOException e) {
+//                        Log.e(TAG, "File error", e);
+//                    }
+//                    Matcher ovpnMatcher = ovpnPattern.matcher(line);
+//                    Matcher ovpnRunMatcher = ovpnRunPattern.matcher(line);
+//                    Matcher remarkMatcher = remarkPattern.matcher(line);
+//                    Matcher serverMatcher = serverPattern.matcher(line);
+//                    if (ovpnMatcher.find()) {
+//                        ovpnString = ovpnMatcher.group(1);
+//                    }
+//                    if (ovpnRunMatcher.find()) {
+//                        ovpnRunString = ovpnRunMatcher.group(1);
+//                    }
+//                    if (remarkMatcher.find()) {
+//                        remarkString = remarkMatcher.group(1);
+//                    }
+//                    if (serverMatcher.find()) {
+//                        serverString = serverMatcher.group(1);
+//                    }
+//                }
+//                if (ovpnRunString != null) {
+//                    if (ovpnRunString.equals("yes"))
+//                    {
+//                        ProfileDB.addDB(fileName,remarkString,serverString ,ovpnString, TRUE);
+//                    } else {
+//                        ProfileDB.addDB(fileName,remarkString,serverString,ovpnString, FALSE);
+//                    }
+//                }
+//            }
+//        }
+//        // Show text if there are no items
+//        //if (remarks.isEmpty()) {
+//        //    recyclerView.setVisibility(View.GONE);
+//        //    emptyView.setVisibility(View.VISIBLE);
+//        //} else {
+//        //    recyclerView.setVisibility(View.VISIBLE);
+//        //    emptyView.setVisibility(View.GONE);
+//        //}
+//        Objects.requireNonNull(recyclerView.getAdapter()).notifyDataSetChanged();
+//    }
 
-	public RecyclerView getRecyclerView() {
-		return recyclerView;
-	}
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
+    }
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		StunnelService.checkStatus(getActivity());
-	}
+    @Override
+    public void onResume() {
+        super.onResume();
+        StunnelService.checkStatus(getActivity());
+    }
 }

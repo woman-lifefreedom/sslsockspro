@@ -57,111 +57,111 @@ import link.infra.sslsockspro.service.StunnelService;
  */
 public class LogFragment extends Fragment {
 
-	private OnLogFragmentInteractionListener mListener;
-	String log;
-	int level = LOG_LEVEL_DEFAULT;
-	String format = LOG_SHORT;
-	public static boolean clearLogsOnNewConnect = true;
+    private OnLogFragmentInteractionListener mListener;
+    String log;
+    int level = LOG_LEVEL_DEFAULT;
+    String format = LOG_SHORT;
+    public static boolean clearLogsOnNewConnect = true;
 
-	public LogFragment() {
-		// Required empty public constructor
-	}
+    public LogFragment() {
+        // Required empty public constructor
+    }
 
-	/**
-	 * Use this factory method to create a new instance of
-	 * this fragment using the provided parameters.
-	 *
-	 * @return A new instance of fragment LogFragment.
-	 */
-	public static LogFragment newInstance(OnLogFragmentInteractionListener listener) {
-		LogFragment fragment = new LogFragment();
-		fragment.mListener = listener;
-		return fragment;
-	}
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @return A new instance of fragment LogFragment.
+     */
+    public static LogFragment newInstance(OnLogFragmentInteractionListener listener) {
+        LogFragment fragment = new LogFragment();
+        fragment.mListener = listener;
+        return fragment;
+    }
 
-	@Override
-	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-	                         Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
-		setHasOptionsMenu(true);
-		return inflater.inflate(R.layout.fragment_log, container,false);
-	}
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        setHasOptionsMenu(true);
+        return inflater.inflate(R.layout.fragment_log, container,false);
+    }
 
-	@Override
-	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-		final TextView logText = view.findViewById(R.id.logtext);
-		logText.setMovementMethod(new ScrollingMovementMethod());
-		final TextView logLevelView = view.findViewById(R.id.log_level_tv);
-		logLevelView.setText(String.valueOf(LOG_LEVEL_DEFAULT));
-		final CheckBox clearLogs = view.findViewById(R.id.clear_logs_connect);
-		clearLogs.setChecked(clearLogsOnNewConnect);
-		//clearLogs.setVisibility(View.GONE);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        final TextView logText = view.findViewById(R.id.logtext);
+        logText.setMovementMethod(new ScrollingMovementMethod());
+        final TextView logLevelView = view.findViewById(R.id.log_level_tv);
+        logLevelView.setText(String.valueOf(LOG_LEVEL_DEFAULT));
+        final CheckBox clearLogs = view.findViewById(R.id.clear_logs_connect);
+        clearLogs.setChecked(clearLogsOnNewConnect);
+        //clearLogs.setVisibility(View.GONE);
 
-		clearLogs.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				clearLogsOnNewConnect = isChecked;
-			}
-		});
+        clearLogs.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                clearLogsOnNewConnect = isChecked;
+            }
+        });
 
-		RadioGroup radioGroup = view.findViewById(R.id.timeFormatRadioGroup);
-		RadioButton radioButtonShort = view.findViewById(R.id.radioShort);
-		radioGroup.check(radioButtonShort.getId());
-		radioGroup.setOnCheckedChangeListener((group, checkedId) -> mListener.onLogFormatChanged(group,checkedId));
+        RadioGroup radioGroup = view.findViewById(R.id.timeFormatRadioGroup);
+        RadioButton radioButtonShort = view.findViewById(R.id.radioShort);
+        radioGroup.check(radioButtonShort.getId());
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> mListener.onLogFormatChanged(group,checkedId));
 
-		SeekBar seekBar = view.findViewById(R.id.log_level_seekbar);
-		seekBar.setProgress(LOG_LEVEL_DEFAULT - LOG_LEVEL_OFFSET);
+        SeekBar seekBar = view.findViewById(R.id.log_level_seekbar);
+        seekBar.setProgress(LOG_LEVEL_DEFAULT - LOG_LEVEL_OFFSET);
 
-		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-			@Override
-			public void onProgressChanged(
-					SeekBar seekBar, int progress,
-					boolean fromUser) {
-				logLevelView.setText(String.valueOf(progress + LOG_LEVEL_OFFSET));
-				mListener.onLogLevelChanged(progress + LOG_LEVEL_OFFSET);
-			}
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(
+                    SeekBar seekBar, int progress,
+                    boolean fromUser) {
+                logLevelView.setText(String.valueOf(progress + LOG_LEVEL_OFFSET));
+                mListener.onLogLevelChanged(progress + LOG_LEVEL_OFFSET);
+            }
 
-			@Override
-			public void onStartTrackingTouch(SeekBar seekBar) {
-			}
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
-			@Override
-			public void onStopTrackingTouch(SeekBar seekBar) {
-			}
-		});
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
 
-		//logText.setMovementMethod(new ScrollingMovementMethod());
-		Activity act = getActivity();
-		if (act == null) {
-			return;
-		}
+        //logText.setMovementMethod(new ScrollingMovementMethod());
+        Activity act = getActivity();
+        if (act == null) {
+            return;
+        }
 
-		StunnelService.logData.observe(getViewLifecycleOwner(), log -> {
-			this.log = log;
-			MainActivity.formatLog(log,format,level);
-		});
-		MainActivity.logFormat.observe(getViewLifecycleOwner(), format ->{
-			this.format = format;
-			MainActivity.formatLog(log,format,level);
-		});
-		MainActivity.logLevel.observe(getViewLifecycleOwner(), level ->{
-			this.level = level;
-			MainActivity.formatLog(log,format,level);
-		});
-		MainActivity.logDataFormattedLeveled.observe(getViewLifecycleOwner(), logText::setText);
-	}
+        StunnelService.logData.observe(getViewLifecycleOwner(), log -> {
+            this.log = log;
+            MainActivity.formatLog(log,format,level);
+        });
+        MainActivity.logFormat.observe(getViewLifecycleOwner(), format ->{
+            this.format = format;
+            MainActivity.formatLog(log,format,level);
+        });
+        MainActivity.logLevel.observe(getViewLifecycleOwner(), level ->{
+            this.level = level;
+            MainActivity.formatLog(log,format,level);
+        });
+        MainActivity.logDataFormattedLeveled.observe(getViewLifecycleOwner(), logText::setText);
+    }
 
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		menu.findItem(R.id.action_import_profile).setVisible(false);
-		menu.findItem(R.id.action_add_profile).setVisible(false);
-		menu.findItem(R.id.export_logs).setVisible(false);
-	}
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_import_profile).setVisible(false);
+        menu.findItem(R.id.action_add_profile).setVisible(false);
+        menu.findItem(R.id.export_logs).setVisible(false);
+    }
 
-	public interface OnLogFragmentInteractionListener {
-		void onLogFormatChanged(RadioGroup group, int checkedId);
-		void onLogLevelChanged(int position);
-//		void onClearLogs(boolean cleanLogs);
-	}
+    public interface OnLogFragmentInteractionListener {
+        void onLogFormatChanged(RadioGroup group, int checkedId);
+        void onLogLevelChanged(int position);
+//        void onClearLogs(boolean cleanLogs);
+    }
 
 }

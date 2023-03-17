@@ -51,115 +51,115 @@ import link.infra.sslsockspro.R;
  */
 public class AboutFragment extends Fragment {
 
-	private ExpandableListView eView;
-	private final List<AboutItem> items = new ArrayList<>();
-	private static String[] javidnam_array;
-	private static String comma;
-	private static String htmlZza;
-	private static String memo_title;
-	private static String memo_content;
-	private AboutExpandableListAdapter eAdapter;
+    private ExpandableListView eView;
+    private final List<AboutItem> items = new ArrayList<>();
+    private static String[] javidnam_array;
+    private static String comma;
+    private static String htmlZza;
+    private static String memo_title;
+    private static String memo_content;
+    private AboutExpandableListAdapter eAdapter;
 
 
-	public AboutFragment() {
-		// Required empty public constructor
-	}
+    public AboutFragment() {
+        // Required empty public constructor
+    }
 
-	/**
-	 * Use this factory method to create a new instance of
-	 * this fragment using the provided parameters.
-	 *
-	 * @return A new instance of fragment LogFragment.
-	 */
-	public static AboutFragment newInstance() {
-		AboutFragment fragment = new AboutFragment();
-		return fragment;
-	}
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @return A new instance of fragment LogFragment.
+     */
+    public static AboutFragment newInstance() {
+        AboutFragment fragment = new AboutFragment();
+        return fragment;
+    }
 
-	@Override
-	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-	                         Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
 
-		setHasOptionsMenu(true);
-		return inflater.inflate(R.layout.fragment_about, container,false);
-	}
+        setHasOptionsMenu(true);
+        return inflater.inflate(R.layout.fragment_about, container,false);
+    }
 
-	@Override
-	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-		Context context = view.getContext();
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Context context = view.getContext();
 
-		comma = getResources().getString(R.string.comma);
-		String zza = getResources().getString(R.string.about_memo_content_zza);
-		htmlZza = "<p><span style=\"color:#8e44ad\"><em><strong><span style=\"font-size:16px\">" + zza + "</span></strong></em></span></p>";
-		String javidnam = getResources().getString(R.string.javidnam);
-		javidnam_array = javidnam.split(",");
-		Collections.shuffle(Arrays.asList(javidnam_array));
-		String source_code = getResources().getString(R.string.source_code);
+        comma = getResources().getString(R.string.comma);
+        String zza = getResources().getString(R.string.about_memo_content_zza);
+        htmlZza = "<p><span style=\"color:#8e44ad\"><em><strong><span style=\"font-size:16px\">" + zza + "</span></strong></em></span></p>";
+        String javidnam = getResources().getString(R.string.javidnam);
+        javidnam_array = javidnam.split(",");
+        Collections.shuffle(Arrays.asList(javidnam_array));
+        String source_code = getResources().getString(R.string.source_code);
 
-		memo_title = getResources().getString(R.string.about_memo_title);
-		memo_content =
-				htmlZza
-				+ getResources().getString(R.string.about_memo_content)
-				+ " <b>" + javidnam_array[0]
-				+ comma + " " + javidnam_array[1]
-				+ comma + " " + javidnam_array[2]
-				+ comma + " " + javidnam_array[3]
-				+ comma + " " + javidnam_array[4]
-				+ "</b> " + getResources().getString(R.string.about_memo_content_p2);
-		String about_us_title = getResources().getString(R.string.about_us_title);
-		String about_us_content = getResources().getString(R.string.about_us_content);
-		String copyright_title = getResources().getString(R.string.about_copyright_title);
-		String copyright_content = getResources().getString(R.string.about_copyright_content)
-				+ "<br>"
-				+ "<p><a href=\"" + source_code  + "\">"
-				+ "<span style=\"font-size:10px;\">"
-				+ source_code+ "</span></a></p>";
+        memo_title = getResources().getString(R.string.about_memo_title);
+        memo_content =
+                htmlZza
+                + getResources().getString(R.string.about_memo_content)
+                + " <b>" + javidnam_array[0]
+                + comma + " " + javidnam_array[1]
+                + comma + " " + javidnam_array[2]
+                + comma + " " + javidnam_array[3]
+                + comma + " " + javidnam_array[4]
+                + "</b> " + getResources().getString(R.string.about_memo_content_p2);
+        String about_us_title = getResources().getString(R.string.about_us_title);
+        String about_us_content = getResources().getString(R.string.about_us_content);
+        String copyright_title = getResources().getString(R.string.about_copyright_title);
+        String copyright_content = getResources().getString(R.string.about_copyright_content)
+                + "<br>"
+                + "<p><a href=\"" + source_code  + "\">"
+                + "<span style=\"font-size:10px;\">"
+                + source_code+ "</span></a></p>";
 
-		String privacy_title = getResources().getString(R.string.about_privacy_title);
-		String privacy_content = getResources().getString(R.string.about_privacy_content);
-		items.add(new AboutItem(memo_title, Html.fromHtml(memo_content)));
-		items.add(new AboutItem(privacy_title, Html.fromHtml(privacy_content)));
-		items.add(new AboutItem(copyright_title, Html.fromHtml(copyright_content)));
-		items.add(new AboutItem(about_us_title, Html.fromHtml(about_us_content)));
+        String privacy_title = getResources().getString(R.string.about_privacy_title);
+        String privacy_content = getResources().getString(R.string.about_privacy_content);
+        items.add(new AboutItem(memo_title, Html.fromHtml(memo_content)));
+        items.add(new AboutItem(privacy_title, Html.fromHtml(privacy_content)));
+        items.add(new AboutItem(copyright_title, Html.fromHtml(copyright_content)));
+        items.add(new AboutItem(about_us_title, Html.fromHtml(about_us_content)));
 
-		eView = view.findViewById(R.id.about_list);
-		eAdapter = new AboutExpandableListAdapter(context,items);
-		eView.setAdapter(eAdapter);
-		eView.expandGroup(0);
+        eView = view.findViewById(R.id.about_list);
+        eAdapter = new AboutExpandableListAdapter(context,items);
+        eView.setAdapter(eAdapter);
+        eView.expandGroup(0);
 
-		//final TextView aboutText = view.findViewById(R.id.about_text);
-	}
+        //final TextView aboutText = view.findViewById(R.id.about_text);
+    }
 
-	@Override
-	public void onResume() {
-		super.onResume();
-		shuffleJavidnam();
-		eAdapter.notifyDataSetChanged();
-	}
+    @Override
+    public void onResume() {
+        super.onResume();
+        shuffleJavidnam();
+        eAdapter.notifyDataSetChanged();
+    }
 
-	@Override
-	public void onPrepareOptionsMenu(Menu menu) {
-		menu.findItem(R.id.action_import_profile).setVisible(false);
-		menu.findItem(R.id.action_add_profile).setVisible(false);
-		menu.findItem(R.id.export_logs).setVisible(false);
-		menu.findItem(R.id.copy_logs).setVisible(false);
-		menu.findItem(R.id.export_logs).setVisible(false);
-	}
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_import_profile).setVisible(false);
+        menu.findItem(R.id.action_add_profile).setVisible(false);
+        menu.findItem(R.id.export_logs).setVisible(false);
+        menu.findItem(R.id.copy_logs).setVisible(false);
+        menu.findItem(R.id.export_logs).setVisible(false);
+    }
 
-	public void shuffleJavidnam() {
-		if (javidnam_array != null ) {
-			Collections.shuffle(Arrays.asList(javidnam_array));
-			memo_content =	htmlZza
-				+ getResources().getString(R.string.about_memo_content)
-				+ " <b>" + javidnam_array[0]
-				+ comma + " " + javidnam_array[1]
-				+ comma + " " + javidnam_array[2]
-				+ comma + " " + javidnam_array[3]
-				+ comma + " " + javidnam_array[4]
-				+ "</b> " + getResources().getString(R.string.about_memo_content_p2);
-			items.set(0,new AboutItem(memo_title,Html.fromHtml(memo_content)));
-		}
-	}
+    public void shuffleJavidnam() {
+        if (javidnam_array != null ) {
+            Collections.shuffle(Arrays.asList(javidnam_array));
+            memo_content =    htmlZza
+                + getResources().getString(R.string.about_memo_content)
+                + " <b>" + javidnam_array[0]
+                + comma + " " + javidnam_array[1]
+                + comma + " " + javidnam_array[2]
+                + comma + " " + javidnam_array[3]
+                + comma + " " + javidnam_array[4]
+                + "</b> " + getResources().getString(R.string.about_memo_content_p2);
+            items.set(0,new AboutItem(memo_title,Html.fromHtml(memo_content)));
+        }
+    }
 
 }

@@ -37,51 +37,51 @@ import link.infra.sslsockspro.service.StunnelService;
  * Other applications can launch this activity to stop the service
  */
 public class ServiceStopActivity extends Activity {
-	OpenVPNIntegrationHandler openVPNIntegrationHandler;
+    OpenVPNIntegrationHandler openVPNIntegrationHandler;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		StunnelService.start(this);
-		/*
-		String openVpnProfile = PreferenceManager.getDefaultSharedPreferences(this).getString("open_vpn_profile", "");
-		if (openVpnProfile.trim().length() > 0) {
-			openVPNIntegrationHandler = new OpenVPNIntegrationHandler(this, ServiceStopActivity.this::finish, ProfileDB.getOvpn(), true);
-			openVPNIntegrationHandler.bind();
-		}
+        StunnelService.start(this);
+        /*
+        String openVpnProfile = PreferenceManager.getDefaultSharedPreferences(this).getString("open_vpn_profile", "");
+        if (openVpnProfile.trim().length() > 0) {
+            openVPNIntegrationHandler = new OpenVPNIntegrationHandler(this, ServiceStopActivity.this::finish, ProfileDB.getOvpn(), true);
+            openVPNIntegrationHandler.bind();
+        }
 
-		 */
-		if (ProfileDB.getRunOvpn() == TRUE) {
-			openVPNIntegrationHandler = new OpenVPNIntegrationHandler(this, ServiceStopActivity.this::finish, ProfileDB.getOvpn(), true);
-			openVPNIntegrationHandler.bind();
-		}
-		Intent intentStop = new Intent(this, StunnelService.class);
-		stopService(intentStop);
-		if (openVPNIntegrationHandler == null) {
-			finish();
-		}
-	}
+         */
+        if (ProfileDB.getRunOvpn() == TRUE) {
+            openVPNIntegrationHandler = new OpenVPNIntegrationHandler(this, ServiceStopActivity.this::finish, ProfileDB.getOvpn(), true);
+            openVPNIntegrationHandler.bind();
+        }
+        Intent intentStop = new Intent(this, StunnelService.class);
+        stopService(intentStop);
+        if (openVPNIntegrationHandler == null) {
+            finish();
+        }
+    }
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == OpenVPNIntegrationHandler.PERMISSION_REQUEST) {
-			if (resultCode == RESULT_OK && openVPNIntegrationHandler != null) {
-				openVPNIntegrationHandler.doVpnPermissionRequest();
-			}
-		} else if (requestCode == OpenVPNIntegrationHandler.VPN_PERMISSION_REQUEST) {
-			if (resultCode == RESULT_OK && openVPNIntegrationHandler != null) {
-				openVPNIntegrationHandler.disconnect();
-			}
-		}
-	}
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == OpenVPNIntegrationHandler.PERMISSION_REQUEST) {
+            if (resultCode == RESULT_OK && openVPNIntegrationHandler != null) {
+                openVPNIntegrationHandler.doVpnPermissionRequest();
+            }
+        } else if (requestCode == OpenVPNIntegrationHandler.VPN_PERMISSION_REQUEST) {
+            if (resultCode == RESULT_OK && openVPNIntegrationHandler != null) {
+                openVPNIntegrationHandler.disconnect();
+            }
+        }
+    }
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		if (openVPNIntegrationHandler != null) {
-			openVPNIntegrationHandler.unbind();
-		}
-	}
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (openVPNIntegrationHandler != null) {
+            openVPNIntegrationHandler.unbind();
+        }
+    }
 }

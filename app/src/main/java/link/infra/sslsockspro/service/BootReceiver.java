@@ -30,13 +30,13 @@ import android.content.Intent;
 import androidx.preference.PreferenceManager;
 
 public class BootReceiver extends BroadcastReceiver {
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-			boolean start = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("start_on_boot", false);
-			if (start) {
-				StunnelService.start(context);
-			}
-		}
-	}
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+            boolean start = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("start_on_boot", false);
+            if (start) {
+                StunnelService.start(context);
+            }
+        }
+    }
 }

@@ -37,57 +37,57 @@ import link.infra.sslsockspro.R;
 
 public class KeyRecyclerViewAdapter extends RecyclerView.Adapter<KeyRecyclerViewAdapter.ViewHolder> {
 
-	public static class KeyItem {
-		public final String filename;
-		KeyItem(String filename) {
-			this.filename = filename;
-		}
-	}
+    public static class KeyItem {
+        public final String filename;
+        KeyItem(String filename) {
+            this.filename = filename;
+        }
+    }
 
-	private final List<KeyItem> mValues;
-	private final KeyFragment.OnKeyFragmentInteractionListener mListener;
+    private final List<KeyItem> mValues;
+    private final KeyFragment.OnKeyFragmentInteractionListener mListener;
 
-	KeyRecyclerViewAdapter(List<KeyItem> items, KeyFragment.OnKeyFragmentInteractionListener listener) {
-		mValues = items;
-		mListener = listener;
-	}
+    KeyRecyclerViewAdapter(List<KeyItem> items, KeyFragment.OnKeyFragmentInteractionListener listener) {
+        mValues = items;
+        mListener = listener;
+    }
 
-	@Override
-	@NonNull
-	public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-		View view = LayoutInflater.from(parent.getContext())
-				.inflate(R.layout.key_item, parent, false);
-		return new ViewHolder(view);
-	}
+    @Override
+    @NonNull
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.key_item, parent, false);
+        return new ViewHolder(view);
+    }
 
-	@Override
-	public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-		holder.mItem = mValues.get(position);
-		holder.mFileNameView.setText(mValues.get(position).filename);
+    @Override
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        holder.mItem = mValues.get(position);
+        holder.mFileNameView.setText(mValues.get(position).filename);
 
-		holder.mView.setOnClickListener(v -> {
-			if (null != mListener) {
-				// Notify the active callbacks interface (the activity, if the
-				// fragment is attached to one) that an item has been selected.
-				mListener.onKeyFragmentInteraction(holder.mItem);
-			}
-		});
-	}
+        holder.mView.setOnClickListener(v -> {
+            if (null != mListener) {
+                // Notify the active callbacks interface (the activity, if the
+                // fragment is attached to one) that an item has been selected.
+                mListener.onKeyFragmentInteraction(holder.mItem);
+            }
+        });
+    }
 
-	@Override
-	public int getItemCount() {
-		return mValues.size();
-	}
+    @Override
+    public int getItemCount() {
+        return mValues.size();
+    }
 
-	static class ViewHolder extends RecyclerView.ViewHolder {
-		final View mView;
-		final TextView mFileNameView;
-		KeyItem mItem;
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        final View mView;
+        final TextView mFileNameView;
+        KeyItem mItem;
 
-		ViewHolder(View view) {
-			super(view);
-			mView = view;
-			mFileNameView = view.findViewById(R.id.key_file_name);
-		}
-	}
+        ViewHolder(View view) {
+            super(view);
+            mView = view;
+            mFileNameView = view.findViewById(R.id.key_file_name);
+        }
+    }
 }

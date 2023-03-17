@@ -35,28 +35,28 @@ import link.infra.sslsockspro.gui.OpenVPNIntegrationHandler;
 import link.infra.sslsockspro.gui.activities.MainActivity;
 
 public class ServiceStopReceiver extends BroadcastReceiver {
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		if (ProfileDB.getRunOvpn()) {
-			Intent intentDisconnect = new Intent(context, OpenVPNIntentService.class);
-			context.startService(intentDisconnect);
-		}
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (ProfileDB.getRunOvpn()) {
+            Intent intentDisconnect = new Intent(context, OpenVPNIntentService.class);
+            context.startService(intentDisconnect);
+        }
 
-		Intent intentStop = new Intent(context, StunnelService.class);
-		context.stopService(intentStop);
-		MainActivity.falseToggle();
-	}
+        Intent intentStop = new Intent(context, StunnelService.class);
+        context.stopService(intentStop);
+        MainActivity.falseToggle();
+    }
 
-	// IntentService is used because a BroadcastReceiver can't bind to services
-	public static class OpenVPNIntentService extends IntentService {
-		private OpenVPNIntegrationHandler handler;
-		public OpenVPNIntentService() {
-			super("OpenVPNIntentService");
-		}
-		@Override
-		protected void onHandleIntent(@Nullable Intent intent) {
-			handler = new OpenVPNIntegrationHandler(this, () -> handler.unbind(), "", true);
-			handler.bind();
-		}
-	}
+    // IntentService is used because a BroadcastReceiver can't bind to services
+    public static class OpenVPNIntentService extends IntentService {
+        private OpenVPNIntegrationHandler handler;
+        public OpenVPNIntentService() {
+            super("OpenVPNIntentService");
+        }
+        @Override
+        protected void onHandleIntent(@Nullable Intent intent) {
+            handler = new OpenVPNIntegrationHandler(this, () -> handler.unbind(), "", true);
+            handler.bind();
+        }
+    }
 }

@@ -24,37 +24,37 @@
 package link.infra.sslsockspro;
 
 public class Constants {
-	public static final String PSKSECRETS = "psksecrets.txt";
-	public static final String PID = "pid";
-	public static final String EXT_CONF = ".conf";
-	public static final String EXT_XML = ".xml";
-	public static final String SERVICE_DIR = "stunnel_service";
-	public static final String PROFILES_DIR = "stunnel_profiles";
-	public static final String CONFIG = "config.conf";
-	public static final String PROFILE_DATABASE = "profiles_db.json";
-	public static final String VERSION_CONF = "ver.conf";
-	public static final String DUMMY_CONF = "dummy.conf";
-	public static final String APP_LOG = "log";
-	public static final String VERSION_LOG = "ver_log";
+    public static final String PSKSECRETS = "psksecrets.txt";
+    public static final String PID = "pid";
+    public static final String EXT_CONF = ".conf";
+    public static final String EXT_XML = ".xml";
+    public static final String SERVICE_DIR = "stunnel_service";
+    public static final String PROFILES_DIR = "stunnel_profiles";
+    public static final String CONFIG = "config.conf";
+    public static final String PROFILE_DATABASE = "profiles_db.json";
+    public static final String VERSION_CONF = "ver.conf";
+    public static final String DUMMY_CONF = "dummy.conf";
+    public static final String APP_LOG = "log";
+    public static final String VERSION_LOG = "ver_log";
 
-	// sslsocks related configurations
-	public static final String OVPN_RUN = "ovpn_run";
-	public static final String OVPN_PROFILE = "ovpn_profile";
-	public static final String SSLSOCKS_REMARK = "remark";
-	public static final String STUNNEL_OUTPUT = "output";
-	public static final String TUNNEL = "tunnel";
-	public static final String STUNNEL_LOG = "log";
+    // sslsocks related configurations
+    public static final String OVPN_RUN = "ovpn_run";
+    public static final String OVPN_PROFILE = "ovpn_profile";
+    public static final String SSLSOCKS_REMARK = "remark";
+    public static final String STUNNEL_OUTPUT = "output";
+    public static final String TUNNEL = "tunnel";
+    public static final String STUNNEL_LOG = "log";
 
 
-	// log related constants
-	public static final int LOG_LEVEL_DEFAULT = 5;
-	public static final int LOG_LEVEL_OFFSET = 3;
-	public static final String LOG_NONE = "None";
-	public static final String LOG_SHORT = "Short";
-	public static final String LOG_ISO = "ISO";
+    // log related constants
+    public static final int LOG_LEVEL_DEFAULT = 5;
+    public static final int LOG_LEVEL_OFFSET = 3;
+    public static final String LOG_NONE = "None";
+    public static final String LOG_SHORT = "Short";
+    public static final String LOG_ISO = "ISO";
 
-	//shared prefs key
-	public static final String LAST_SELECTED_PROFILE = "last_selected_profile";
+    //shared prefs key
+    public static final String LAST_SELECTED_PROFILE = "last_selected_profile";
 
 
 }
