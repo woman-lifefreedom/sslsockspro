@@ -1,5 +1,6 @@
 /*
- * Author: WOMAN-LIFE-FREEDOM
+ * SSLSocks Pro
+ * Copyright (C) 2022-2023 WOMAN-LIFE-FREEDOM
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,11 +68,6 @@ public class ProfileDB {
 
     public static final int NEW_PROFILE = -1;
     private static ProfileDB profileManagement = null;
-//    private static final List<String> files = new ArrayList<>();
-//    private static final List<String> remarks = new ArrayList<>();
-//    private static final List<String> servers = new ArrayList<>();
-//    private static final List<String> ovpns = new ArrayList<>();
-//    private static final List<Boolean> runOvpns = new ArrayList<>();
     private static int position = -1; // -1 means no position by default
     private static int lastSelectedPosition;
 

@@ -1,4 +1,12 @@
 /*
+ * SSLSocks Pro
+ * Copyright (C) 2022-2023 WOMAN-LIFE-FREEDOM
+ *
+ * Portions of SSLSocks Pro contain code derived from, or inspired by
+ * SSLSocks (https://github.com/comp500/SSLSocks) under
+ * the GNU General Public License (GPL) version 3 or later:
+ * The copyright notice of the original code is:
+ *
  * Copyright (C) 2017-2021 comp500
  *
  * This program is free software: you can redistribute it and/or modify
@@ -43,6 +51,10 @@ public class OpenVPNIntegrationHandler {
     private IOpenVPNAPIService srv = null;
     public static final int PERMISSION_REQUEST = 100;
     public static final int VPN_PERMISSION_REQUEST = 101;
+
+    public static final int OVPN_CONNECT_PROFILE = 101;
+    public static final int OVPN_ADD_PROFILE = 101;
+    public static final int OVPN_REMOVE_PROFILE = 101;
 
     private static final String TAG = OpenVPNIntegrationHandler.class.getSimpleName();
     private final WeakReference<Context> ctxRef;
@@ -171,6 +183,14 @@ public class OpenVPNIntegrationHandler {
         if (shouldDisconnect) {
             doneCallback.run();
         }
+    }
+
+    public void addProfile(String profileName, String profileContent) {
+
+    }
+
+    public APIVpnProfile findProfile(String profileName) {
+        return null;
     }
 
 }

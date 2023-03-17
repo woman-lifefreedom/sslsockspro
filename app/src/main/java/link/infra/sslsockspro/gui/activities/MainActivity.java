@@ -1,6 +1,13 @@
 /*
- * Modified by WOMAN-LIFE-FREEDOM 2022
- * (First release: 2017-2021 comp500)
+ * SSLSocks Pro
+ * Copyright (C) 2022-2023 WOMAN-LIFE-FREEDOM
+ *
+ * Portions of SSLSocks Pro contain code derived from, or inspired by
+ * SSLSocks (https://github.com/comp500/SSLSocks) under
+ * the GNU General Public License (GPL) version 3 or later:
+ * The copyright notice of the original code is:
+ *
+ * Copyright (C) 2017-2021 comp500
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
