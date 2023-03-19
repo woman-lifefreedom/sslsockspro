@@ -49,6 +49,7 @@ import static link.infra.sslsockspro.gui.fragments.ProfileEditActivity.ACTION_IM
 import static link.infra.sslsockspro.gui.fragments.ProfileEditActivity.ARG_ACTION;
 import static link.infra.sslsockspro.gui.fragments.ProfileEditActivity.ARG_POSITION;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ClipData;
@@ -184,7 +185,8 @@ public class MainActivity extends AppCompatActivity
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefsEditor = prefs.edit();
         prefs.getInt(LAST_SELECTED_PROFILE,-1);
-        ProfileDB.setLastSelectedPosition(prefs.getInt(LAST_SELECTED_PROFILE,-1));
+//        ProfileDB.setLastSelectedPosition(prefs.getInt(LAST_SELECTED_PROFILE,-1));
+        ProfileDB.setPosition(prefs.getInt(LAST_SELECTED_PROFILE,-1));
 
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -330,13 +332,16 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onResume() {
         super.onResume();
         StunnelService.checkStatus(this);
-//        if (profilesFragment != null) {
-//            profilesFragment.get().profileUpdateList(getApplicationContext());
-//        }
+        if (profilesFragment != null) {
+            loadDatabase();
+            Objects.requireNonNull(profilesFragment.get().getRecyclerView().getAdapter()).notifyDataSetChanged();
+            profilesFragment.get().updateView();
+        }
     }
 
     @Override
@@ -386,6 +391,7 @@ public class MainActivity extends AppCompatActivity
             } else {
                 if (ProfileDB.getSize() == 1) {
                     profilesFragment.get().updateView();
+                    ProfileDB.setPosition(0);
                 }
                 Objects.requireNonNull(profilesFragment.get().getRecyclerView().getAdapter()).notifyItemInserted(ProfileDB.getSize()-1);
             }
@@ -397,6 +403,10 @@ public class MainActivity extends AppCompatActivity
             ProfileDB.removeProfile(getApplicationContext(),position);
         } catch (IOException e) {
             Log.e(TAG, "failed to write to database", e);
+        }
+        if (position < ProfileDB.getPosition() || ProfileDB.getSize() == ProfileDB.getPosition()) {
+            prefsEditor.putInt(LAST_SELECTED_PROFILE, ProfileDB.getPosition());
+            prefsEditor.apply();
         }
     }
 
@@ -571,6 +581,7 @@ public class MainActivity extends AppCompatActivity
                             ProfileDB.saveProfile(fileContents, getApplicationContext(), NEW_PROFILE);
                             if (ProfileDB.getSize() == 1) {
                                 profilesFragment.get().updateView();
+                                ProfileDB.setPosition(0);
                             }
                             Objects.requireNonNull(profilesFragment.get().getRecyclerView().getAdapter()).notifyItemInserted(ProfileDB.getSize()-1);
                             Toast.makeText(this, R.string.action_profile_added, Toast.LENGTH_SHORT).show();

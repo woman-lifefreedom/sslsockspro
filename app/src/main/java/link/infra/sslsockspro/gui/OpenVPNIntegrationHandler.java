@@ -46,6 +46,7 @@ import java.util.Objects;
 
 import de.blinkt.openvpn.api.APIVpnProfile;
 import de.blinkt.openvpn.api.IOpenVPNAPIService;
+import link.infra.sslsockspro.database.ProfileDB;
 
 public class OpenVPNIntegrationHandler {
     private IOpenVPNAPIService srv = null;
@@ -62,6 +63,7 @@ public class OpenVPNIntegrationHandler {
     private final Runnable doneCallback;
     private final String profileName;
     private final boolean shouldDisconnect;
+    private int position;
 
     public OpenVPNIntegrationHandler(Activity ctx, Runnable doneCallback, String profile, boolean shouldDisconnect) {
         this.ctxRef = new WeakReference<>(ctx);
@@ -76,6 +78,15 @@ public class OpenVPNIntegrationHandler {
         this.ctxRef = new WeakReference<>(ctx);
         this.doneCallback = doneCallback;
         this.profileName = profile;
+        this.shouldDisconnect = shouldDisconnect;
+        Log.d(TAG, "created");
+    }
+
+    public OpenVPNIntegrationHandler(Activity ctx, Runnable doneCallback, int position, boolean shouldDisconnect) {
+        this.ctxRef = new WeakReference<>(ctx);
+        this.doneCallback = doneCallback;
+        this.position = position;
+        this.profileName = ProfileDB.getOvpn();
         this.shouldDisconnect = shouldDisconnect;
         Log.d(TAG, "created");
     }

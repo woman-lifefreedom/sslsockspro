@@ -69,7 +69,7 @@ public class ProfileDB {
     public static final int NEW_PROFILE = -1;
     private static ProfileDB profileManagement = null;
     private static int position = -1; // -1 means no position by default
-    private static int lastSelectedPosition;
+//    private static int lastSelectedPosition;
 
     private static List<ProfileItem> mProfileItems = new ArrayList<>();
     private static ProfileItem newProfileItem;
@@ -377,14 +377,14 @@ public class ProfileDB {
         }
     }
 
-    public static int getLastSelectedPosition() {
-        return lastSelectedPosition;
-    }
-
-    public static void setLastSelectedPosition(int lastSelectedPosition) {
-        ProfileDB.lastSelectedPosition = lastSelectedPosition;
-    }
-
+//    public static int getLastSelectedPosition() {
+//        return lastSelectedPosition;
+//    }
+//
+//    public static void setLastSelectedPosition(int lastSelectedPosition) {
+//        ProfileDB.lastSelectedPosition = lastSelectedPosition;
+//    }
+//
 //    public static void saveProfile(Context context){
 //        final String xmlFilePath = context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + "xml-db.xml";
 //        XmlSerializer xmlSerializer = Xml.newSerializer();

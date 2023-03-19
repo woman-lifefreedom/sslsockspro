@@ -44,7 +44,7 @@ public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecy
     private static final long CLICK_TIME_INTERVAL = 100;
     private long mLastClickTime;
 
-    int selectedItem; // -1 means no selected item by default.
+//    int selectedItem; // -1 means no selected item by default.
 
     public ProfileRecyclerViewAdapter(ProfileFragment.OnProfileFragmentInteractionListener listener,
                                       OnSetView setView) {
@@ -55,23 +55,23 @@ public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecy
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (ProfileDB.getSize() == 0) {
-            // No items in the database
-            selectedItem = -1;
-            ProfileDB.setPosition(-1);
-        } else if (ProfileDB.getPosition() == -1) {
-            // first time the app is running
-            if (ProfileDB.getLastSelectedPosition() > ProfileDB.getSize()) {
-                selectedItem = 0;
-                ProfileDB.setPosition(0);
-            } else {
-                // last selected item is valid
-                selectedItem = ProfileDB.getLastSelectedPosition();
-                ProfileDB.setPosition(ProfileDB.getLastSelectedPosition());
-            }
-        } else {
-            selectedItem = ProfileDB.getPosition();
-        }
+//        if (ProfileDB.getSize() == 0) {
+//            // No items in the database
+//            selectedItem = -1;
+//            ProfileDB.setPosition(-1);
+//        } else if (ProfileDB.getPosition() == -1) {
+//            // first time the app is running
+//            if (ProfileDB.getLastSelectedPosition() > ProfileDB.getSize()) {
+//                selectedItem = 0;
+//                ProfileDB.setPosition(0);
+//            } else {
+//                // last selected item is valid
+//                selectedItem = ProfileDB.getLastSelectedPosition();
+//                ProfileDB.setPosition(ProfileDB.getLastSelectedPosition());
+//            }
+//        } else {
+//            selectedItem = ProfileDB.getPosition();
+//        }
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.profile_item, parent, false);
         return new ViewHolder(view);
@@ -105,12 +105,13 @@ public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecy
         holder.mRemarkView.setText(ProfileDB.getRemark(position));
         holder.mServerView.setText(ProfileDB.getHost(position, 0));
 
-        if (ProfileDB.getSize() > 0 && selectedItem == -1) {
-            selectedItem = 0;
-            ProfileDB.setPosition(0);
-            ProfileDB.setLastSelectedPosition(0);
-        }
-        if (position != selectedItem) {
+//        if (ProfileDB.getSize() > 0 && selectedItem == -1) {
+//            selectedItem = 0;
+//            ProfileDB.setPosition(0);
+//            ProfileDB.setLastSelectedPosition(0);
+//        }
+
+        if (position != ProfileDB.getPosition()) {
             holder.mIndicate.setBackgroundColor(0);
         } else {
             holder.mIndicate.setBackgroundResource(R.color.profileSelect);
@@ -139,12 +140,9 @@ public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecy
                 mListener.onProfileDelete(position);
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position,ProfileDB.getSize());
-                if (selectedItem == ProfileDB.getSize()) {
-                    // ProfileDB.getSize is already reduced by 1 at this point
-                    selectedItem = selectedItem -1;
-                    ProfileDB.setPosition(selectedItem);
-                    ProfileDB.setLastSelectedPosition(selectedItem);
-                    notifyItemChanged(selectedItem);
+                if (position < ProfileDB.getPosition() || ProfileDB.getSize() == ProfileDB.getPosition()) {
+                    ProfileDB.setPosition(ProfileDB.getPosition()-1);
+                    notifyItemChanged(ProfileDB.getPosition());
                 }
                 if (ProfileDB.getSize() == 0) {
                     setView.setEmptyView();
@@ -163,24 +161,26 @@ public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecy
                 }
                 mLastClickTime = now;
                 if (position != RecyclerView.NO_POSITION) {
-                    if (position == selectedItem) {
+                    if (position == ProfileDB.getPosition()) {
                         return;// Here, I don't want to generate a click event on an already selected item.
                     }
-                    int currentSelected = selectedItem;// Create a temp var to deselect an existing one, if any.
-                    selectedItem = position;// Check item.
+//                    int currentSelected = selectedItem;// Create a temp var to deselect an existing one, if any.
+                    int currentSelected = ProfileDB.getPosition();// Create a temp var to deselect an existing one, if any.
+//                    selectedItem = position;/selectedItem/ Check item.
+                    ProfileDB.setPosition(position);
                     if (currentSelected != RecyclerView.NO_POSITION) {
                         notifyItemChanged(currentSelected);// Deselected the previous item.
                     }
-                    notifyItemChanged(selectedItem);// Select the current item.
-                    ProfileDB.setPosition(selectedItem);
-                    ProfileDB.setLastSelectedPosition(selectedItem);
+//                    notifyItemChanged(selectedItem);// Select the current item.
+                    notifyItemChanged(ProfileDB.getPosition());// Select the current item.
+//                    ProfileDB.setPosition(selectedItem);
+//                    ProfileDB.setLastSelectedPosition(selectedItem);
                     mListener.onProfileSelect(position);
                 }
                 // Notify the active callbacks interface (the activity, if the
                 // fragment is attached to one) that an item has been selected.
             }
         });
-
     }
 
     @Override
@@ -194,4 +194,3 @@ public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecy
     }
 
 }
-

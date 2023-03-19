@@ -2,6 +2,7 @@ package link.infra.sslsockspro.gui.activities;
 
 import static link.infra.sslsockspro.Constants.EXT_CONF;
 import static link.infra.sslsockspro.Constants.PROFILES_DIR;
+import static link.infra.sslsockspro.database.ProfileDB.NEW_PROFILE;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,6 +23,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 import link.infra.sslsockspro.R;
+import link.infra.sslsockspro.database.FileOperation;
+import link.infra.sslsockspro.database.ProfileDB;
 import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
@@ -57,53 +60,28 @@ public class ExternalProfileImportActivity extends AppCompatActivity {
                     Toast.makeText(this, R.string.file_read_fail, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                String fileName = getFileName(fileData);
-                if (!fileName.endsWith(EXT_CONF) ) {
+                String fileName = FileOperation.getFileName(fileData, getApplicationContext());
+                if ( !fileName.endsWith(EXT_CONF) ) {
                     Toast.makeText(this, R.string.profile_name_ext, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                saveFile();
-//                Intent intent = new Intent(this, AdvancedSettingsActivity.class);
-//                startActivity(intent);
+                if (ProfileDB.parseProfile(fileContents)) {
+                    try {
+                        ProfileDB.saveProfile(fileContents, getApplicationContext(), NEW_PROFILE);
+                        if (ProfileDB.getSize() == 1) {
+                            ProfileDB.setPosition(0);
+                        }
+                        Toast.makeText(this, R.string.action_profile_added, Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        Log.e(TAG, "Failed sslsockspro profile writing.", e);
+                        Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Log.e(TAG, "file content is wrong");
+                }
                 finish();
             }
         }
     }
-
-    // Get the file name for importing a file from a Uri
-    private String getFileName(Uri uri) {
-        String result = null;
-        if ("content".equals(uri.getScheme())) {
-            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                }
-            }
-        }
-        if (result == null) {
-            result = Objects.requireNonNull(uri.getPath());
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
-    }
-
-    private void saveFile() {
-        String fileName = UUID.randomUUID().toString();
-        File fileConf = new File(getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName + EXT_CONF);
-        try (BufferedSink out = Okio.buffer(Okio.sink(fileConf))) {
-            out.writeUtf8(fileContents);
-            out.close();
-            setResult(RESULT_OK);
-        } catch (IOException e) {
-            Toast.makeText(this, R.string.file_write_fail, Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Failed stunnel .conf file writing: ", e);
-        }
-        Toast.makeText(this, R.string.action_profile_added, Toast.LENGTH_SHORT).show();
-    }
-
-
 
 }
