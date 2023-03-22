@@ -1,6 +1,7 @@
 #include <jni.h>
-#include "jnicalls.h"
+#include <string.h>
 #include "prototypes.h"
+#include "ui.h"
 
 /*
  * begin extern

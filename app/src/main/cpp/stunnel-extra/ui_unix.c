@@ -43,6 +43,7 @@ NOEXPORT int daemonize(int);
 NOEXPORT int create_pid(void);
 NOEXPORT void delete_pid(void);
 #endif
+void signal_handler(int);
 
 int main_stunnel(int argc, char* argv[]) { /* execution begins here 8-) */
     int retval;
@@ -51,7 +52,7 @@ int main_stunnel(int argc, char* argv[]) { /* execution begins here 8-) */
     mallopt(M_MMAP_THRESHOLD, 4096);
 #endif
     tls_init(); /* initialize thread-local storage */
-    crypto_init(NULL); /* initialize libcrypto */
+    crypto_init(); /* initialize libcrypto */
 
     retval=main_unix(argc, argv);
     main_cleanup();
