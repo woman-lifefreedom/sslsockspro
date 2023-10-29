@@ -33,6 +33,7 @@ public class StunnelKeys {
     public static final String KEY_ST_OVPN_RUN = "ovpn_run";
     public static final String KEY_ST_OVPN_PROFILE = "ovpn_profile";
     public static final String KEY_ST_REMARK = "remark";
+    public static final String KEY_ST_OVPN_EMBEDDED = "openvpn";
 
     /* service option keys */
     public static final String KEY_ST_CONNECT = "connect";

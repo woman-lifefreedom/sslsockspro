@@ -141,7 +141,13 @@ public class StunnelService extends Service {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_STARTNOVPN.equals(action)) {
-                handleStart();
+                TimerTask task = new TimerTask() {
+                    public void run() {
+                        handleStart();
+                    }
+                };
+                Timer timer = new Timer();
+                timer.schedule(task, 100);
             }
         }
         return START_NOT_STICKY;
@@ -276,7 +282,7 @@ public class StunnelService extends Service {
             out.close();
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.d(TAG, "Failed config file setup");
             return false;
         }
     }
@@ -294,7 +300,7 @@ public class StunnelService extends Service {
             out.close();
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.d(TAG, "Failed dummy config file setup");
             return false;
         }
     }

@@ -25,11 +25,13 @@
 package link.infra.sslsockspro.database;
 
 import static link.infra.sslsockspro.Constants.EXT_CONF;
+import static link.infra.sslsockspro.Constants.EXT_OVPN;
 import static link.infra.sslsockspro.Constants.PROFILES_DIR;
 import static link.infra.sslsockspro.Constants.PROFILE_DATABASE;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_ACCEPT;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_CLIENT;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_CONNECT;
+import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_OVPN_EMBEDDED;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_OVPN_PROFILE;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_OVPN_RUN;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_REMARK;
@@ -96,6 +98,7 @@ public class ProfileDB {
         String profileName;
         StunnelGlobalOptions stunnelGlobalOptions;
         List<StunnelServiceOptions> stunnelServiceOptions = new ArrayList<>();
+        Boolean embeddedOvpn = false;
 
         public ProfileItem() {
         }
@@ -200,6 +203,23 @@ public class ProfileDB {
         out.writeUtf8(fileContents);
         out.close();
 
+        /* writing the embedded ovpn*/
+        String ovpnFileName = fileName.replaceAll(EXT_CONF,EXT_OVPN);
+        File embeddedOvpnProfile = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + ovpnFileName);
+        out = Okio.buffer(Okio.sink(embeddedOvpnProfile));
+        Matcher matcher;
+        matcher = Pattern.compile("<" + KEY_ST_OVPN_EMBEDDED + ">" + "(.+)" + "</" + KEY_ST_OVPN_EMBEDDED + ">",Pattern.DOTALL)
+                .matcher(fileContents);
+        if (matcher.find()) {
+            String embeddedOvpnProfileContent;
+            embeddedOvpnProfileContent = matcher.group(1);
+            if (embeddedOvpnProfileContent != null)
+            {
+                out.writeUtf8(embeddedOvpnProfileContent);
+            }
+        }
+        out.close();
+
         /* add the profile contents to the database */
         newProfileItem.profileName = fileName;
         if (position == NEW_PROFILE) {
@@ -212,14 +232,20 @@ public class ProfileDB {
 
     public static boolean parseProfile(String fileContents) {
         String sslsocksConfig;
+        newProfileItem = new ProfileItem();
+        /* remove commented lines */
+        fileContents= fileContents.replaceAll("(?m)^[\\s]*#.*","");
+        /* separating the embedded ovpn*/
+        Matcher matcher;
+        matcher = Pattern.compile("<" + KEY_ST_OVPN_EMBEDDED + ">" + "(.+)" + "</" + KEY_ST_OVPN_EMBEDDED + ">",Pattern.DOTALL)
+                .matcher(fileContents);
+        if (matcher.find()) {
+            newProfileItem.embeddedOvpn = true;
+        }
         /* remove openvpn part of the config */
         sslsocksConfig = fileContents.replaceAll("<openvpn>[\\s\\S]*</openvpn>","");
-        /* remove commented lines */
-        sslsocksConfig = sslsocksConfig.replaceAll("(?m)^[\\s]*#","");
         /* first part is stunnel global options, the rest are arrays of service options */
         final String[] configParts = sslsocksConfig.split("(?=\\[)");
-
-        newProfileItem = new ProfileItem();
 
         StunnelGlobalOptions go = new StunnelGlobalOptions();
         if ( parseStunnelGlobalOptions(configParts[0],go) ) {
@@ -328,6 +354,10 @@ public class ProfileDB {
         return mProfileItems.get(position).stunnelGlobalOptions.ovpnProfile;
     }
 
+    public static Boolean getEmbeddedOvpn() {
+        return mProfileItems.get(position).embeddedOvpn;
+    }
+
     public static Boolean getRunOvpn() {
         return mProfileItems.get(position).stunnelGlobalOptions.runOvpn;
     }
@@ -361,7 +391,8 @@ public class ProfileDB {
         if (fileName == null) {
             Toast.makeText(context, R.string.file_delete_err, Toast.LENGTH_SHORT).show();
             return false;
-        } else {
+        } else
+        {
             File existingFile = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName);
             if (!existingFile.exists()) {
                 Toast.makeText(context, R.string.file_delete_nexist, Toast.LENGTH_SHORT).show();
@@ -371,10 +402,26 @@ public class ProfileDB {
                 Toast.makeText(context, R.string.file_delete_failed, Toast.LENGTH_SHORT).show();
                 return false;
             }
+            removeOvpnProfile(context,position);
             mProfileItems.remove(position);
             saveProfilesToDatabase(context);
             return true;
         }
+    }
+
+    public static boolean removeOvpnProfile(Context context, int position) throws IOException {
+        String fileName = getFile(position);
+        String ovpnFileName = fileName.replaceAll(EXT_CONF,EXT_OVPN);
+        File existingFile = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + ovpnFileName);
+        if (!existingFile.exists()) {
+            Toast.makeText(context, R.string.file_delete_nexist, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!existingFile.delete()) {
+            Toast.makeText(context, R.string.file_delete_failed, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
 //    public static int getLastSelectedPosition() {

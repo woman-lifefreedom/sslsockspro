@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-project(sslsockspor)
+project(sslsockspro)
 
 # Custom function declarations
 include(tools.cmake)

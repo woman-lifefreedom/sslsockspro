@@ -442,6 +442,7 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, StunnelService.class);
         stopService(intent);
     }
+
     public void fabConnectAction() {
         // toggle is false by default. This means first fabConnectionAction corresponds to start the service.
         if (!Boolean.TRUE.equals(toggle.getValue()) && !StunnelService.isRunningBool() && !StunnelService.isServiceStartedBool()) {

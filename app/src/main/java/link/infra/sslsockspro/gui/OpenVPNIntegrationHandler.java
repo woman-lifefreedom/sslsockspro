@@ -31,6 +31,10 @@
 
 package link.infra.sslsockspro.gui;
 
+import static link.infra.sslsockspro.Constants.EXT_CONF;
+import static link.infra.sslsockspro.Constants.EXT_OVPN;
+import static link.infra.sslsockspro.Constants.PROFILES_DIR;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -40,6 +44,9 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Objects;
@@ -47,6 +54,8 @@ import java.util.Objects;
 import de.blinkt.openvpn.api.APIVpnProfile;
 import de.blinkt.openvpn.api.IOpenVPNAPIService;
 import link.infra.sslsockspro.database.ProfileDB;
+import okio.BufferedSource;
+import okio.Okio;
 
 public class OpenVPNIntegrationHandler {
     private IOpenVPNAPIService srv = null;
@@ -153,7 +162,11 @@ public class OpenVPNIntegrationHandler {
                 if (shouldDisconnect) {
                     disconnect();
                 } else {
-                    connectProfile();
+                    if(ProfileDB.getEmbeddedOvpn()) {
+                        connectEmbeddedProfile();
+                    } else {
+                        connectProfile();
+                    }
                 }
             }
         } catch (RemoteException e) {
@@ -177,6 +190,26 @@ public class OpenVPNIntegrationHandler {
             }
             Log.d(TAG, "starting profile");
             srv.startProfile(foundProfile.mUUID);
+        } catch (RemoteException e) {
+            Log.e(TAG, "Failed to connect to OpenVPN", e);
+        }
+        doneCallback.run();
+    }
+
+    public void connectEmbeddedProfile() {
+        String fileName = ProfileDB.getFile().replaceAll(EXT_CONF,EXT_OVPN);
+        File profile = new File(ctxRef.get().getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + fileName);
+        String contents;
+        final BufferedSource in;
+        try {
+            in = Okio.buffer(Okio.source(profile));
+            contents = in.readUtf8();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        try {
+            srv.startVPN(contents);
         } catch (RemoteException e) {
             Log.e(TAG, "Failed to connect to OpenVPN", e);
         }

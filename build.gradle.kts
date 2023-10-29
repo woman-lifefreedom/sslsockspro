@@ -23,6 +23,13 @@ allprojects {
         mavenCentral()
         google()
     }
+    // added for -Xlint compiling
+    // https://stackoverflow.com/questions/49711773/how-to-recompile-with-xlintdeprecation
+    gradle.projectsEvaluated {
+        tasks.withType<JavaCompile> {
+            options.compilerArgs.addAll(arrayOf("-parameters", "-Xlint:deprecation"))
+        }
+    }
 }
 
 tasks.register("clean", Delete::class) {
