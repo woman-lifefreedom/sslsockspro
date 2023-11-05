@@ -82,3 +82,6 @@ lib*.so
 /.idea/caches
 /meta/
 /.idea/assetWizardSettings.xml
+
+# Built files
+app/release

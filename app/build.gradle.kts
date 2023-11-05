@@ -16,8 +16,8 @@ android {
         applicationId = "link.infra.sslsockspro"
         minSdk = 21
         targetSdk = 33
-        versionCode = 4
-        versionName = "1.1.0"
+        versionCode = 5
+        versionName = "2.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         externalNativeBuild {
@@ -28,7 +28,7 @@ android {
         ndk {
             // Specifies the ABI configurations of your native
             // libraries Gradle should build and package with your app.
-            abiFilters += listOf("arm64-v8a")
+            abiFilters += listOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
         }
     }
 
