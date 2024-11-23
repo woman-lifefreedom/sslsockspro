@@ -1,7 +1,6 @@
 import org.gradle.kotlin.dsl.*
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
-
 plugins {
     //id("org.cadixdev.licenser") version "0.6.1"
     id("com.android.application")
@@ -11,11 +10,11 @@ plugins {
 //apply(plugin = "com.android.application")
 
 android {
-    compileSdk = 33
+    compileSdk = 34
     defaultConfig {
         applicationId = "link.infra.sslsockspro"
-        minSdk = 21
-        targetSdk = 33
+        minSdk = 23
+        targetSdk = 34
         versionCode = 5
         versionName = "2.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -28,7 +27,8 @@ android {
         ndk {
             // Specifies the ABI configurations of your native
             // libraries Gradle should build and package with your app.
-            abiFilters += listOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
+            // abiFilters += listOf("x86", "x86_64", "armeabi-v7a", "arm64-v8a")
+            abiFilters += listOf("arm64-v8a")
         }
     }
 
@@ -59,16 +59,16 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file(gradleLocalProperties(rootDir).getProperty("storeFile"))
-            storePassword = gradleLocalProperties(rootDir).getProperty("storePassword")
-            keyAlias = gradleLocalProperties(rootDir).getProperty("keyAlias")
-            keyPassword = gradleLocalProperties(rootDir).getProperty("keyPassword")
+            storeFile = file(gradleLocalProperties(rootDir, providers).getProperty("storeFile"))
+            storePassword = gradleLocalProperties(rootDir, providers).getProperty("storePassword")
+            keyAlias = gradleLocalProperties(rootDir, providers).getProperty("keyAlias")
+            keyPassword = gradleLocalProperties(rootDir, providers).getProperty("keyPassword")
         }
         getByName("debug") {
-            storeFile = file(gradleLocalProperties(rootDir).getProperty("storeFile"))
-            storePassword = gradleLocalProperties(rootDir).getProperty("storePassword")
-            keyAlias = gradleLocalProperties(rootDir).getProperty("keyAlias")
-            keyPassword = gradleLocalProperties(rootDir).getProperty("keyPassword")
+            storeFile = file(gradleLocalProperties(rootDir, providers).getProperty("storeFile"))
+            storePassword = gradleLocalProperties(rootDir, providers).getProperty("storePassword")
+            keyAlias = gradleLocalProperties(rootDir, providers).getProperty("keyAlias")
+            keyPassword = gradleLocalProperties(rootDir, providers).getProperty("keyPassword")
         }
     }
 
@@ -78,21 +78,30 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
         getByName("debug") {
-            isMinifyEnabled = true
+            //isMinifyEnabled = true
             signingConfig = signingConfigs.getByName("debug")
             isDebuggable = true
         }
     }
 
+    packaging {
+        resources {
+            excludes += "META-INF/DEPENDENCIES"
+        }
+    }
+
     buildFeatures {
+        aidl=true
+        buildConfig = true
         dataBinding = true
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     ndkVersion = "25.1.8937393"
-    buildToolsVersion = "33.0.1"
+    buildToolsVersion = "34.0.0"
+    namespace = "link.infra.sslsockspro"
 
 }
 
@@ -136,20 +145,33 @@ repositories {
 
 dependencies {
     //implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.appcompat:appcompat:1.6.0")
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.cardview:cardview:1.0.0")
-    implementation("com.google.android.material:material:1.8.0")
+    implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("androidx.vectordrawable:vectordrawable:1.1.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.vectordrawable:vectordrawable:1.2.0")
     implementation("com.squareup.okio:okio:2.9.0")
-    implementation("androidx.preference:preference:1.2.0")
+    implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("com.android.support:multidex:1.0.3")
-    implementation("com.google.code.gson:gson:2.9.0")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation(group = "commons-io", name = "commons-io", version = "2.6")
+
+    // For Google Drive Rest API
+    // Guava
+    implementation("com.google.guava:guava:32.0.1-jre")
+    // Guava fix
+    implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
+    //Drive
+    implementation("com.google.api-client:google-api-client-android:1.23.0") {
+        exclude(group = "org.apache.httpcomponents", module = "guava-jdk5")
+    }
+    implementation("com.google.apis:google-api-services-drive:v3-rev136-1.25.0") {
+        exclude(group = "org.apache.httpcomponents", module = "guava-jdk5")
+    }
 }
 
 //license {

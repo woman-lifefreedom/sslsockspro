@@ -45,4 +45,9 @@ public class StunnelKeys {
     public static final String KEY_RM_ST_OUTPUT = "output";     /* internal usage by app */
     public static final String KEY_RM_ST_DEBUG = "debug";     /* internal usage by app */
     public static final String KEY_RM_ST_PID = "pid";           /* no pid is created */
+
+    /* encryption related keys
+    format: KEY_ST_ENC + "v00" + "&" + "remark=someRemark" + "&" + serverUUID=someUUID + "&" + "EOH&" + encryptedData
+    */
+    public static final String KEY_ST_ENC = "sslsocksenc://";
 }

@@ -45,6 +45,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -53,6 +54,7 @@ import java.util.Objects;
 
 import de.blinkt.openvpn.api.APIVpnProfile;
 import de.blinkt.openvpn.api.IOpenVPNAPIService;
+import link.infra.sslsockspro.database.CryptoManager;
 import link.infra.sslsockspro.database.ProfileDB;
 import okio.BufferedSource;
 import okio.Okio;
@@ -162,7 +164,10 @@ public class OpenVPNIntegrationHandler {
                 if (shouldDisconnect) {
                     disconnect();
                 } else {
-                    if(ProfileDB.getEmbeddedOvpn()) {
+                    if (ProfileDB.getEncrypted()) {
+                        connectEncryptedProfile();
+                    }
+                    else if(ProfileDB.getEmbeddedOvpn()) {
                         connectEmbeddedProfile();
                     } else {
                         connectProfile();
@@ -191,6 +196,19 @@ public class OpenVPNIntegrationHandler {
             Log.d(TAG, "starting profile");
             srv.startProfile(foundProfile.mUUID);
         } catch (RemoteException e) {
+            Log.e(TAG, "Failed to connect to OpenVPN", e);
+        }
+        doneCallback.run();
+    }
+
+    public void connectEncryptedProfile() {
+        CryptoManager cm = new CryptoManager();
+        byte[] contentsByte;
+        try {
+            contentsByte = cm.decrypt(new FileInputStream(ctxRef.get().getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + ProfileDB.getFile().replaceAll(EXT_CONF,EXT_OVPN)));
+            String contents = new String(contentsByte);
+            srv.startVPN(contents);
+        } catch (Exception e) {
             Log.e(TAG, "Failed to connect to OpenVPN", e);
         }
         doneCallback.run();

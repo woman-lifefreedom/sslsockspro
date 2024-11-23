@@ -117,6 +117,10 @@ public class ProfileRecyclerViewAdapter extends RecyclerView.Adapter<ProfileRecy
             holder.mIndicate.setBackgroundResource(R.color.profileSelect);
         }
 
+        if (ProfileDB.getEncrypted(position)) {
+            holder.mEdit.setVisibility(View.GONE);
+        }
+
         holder.mEdit.setOnClickListener(v -> {
             if (null != mListener) {
                 long now = System.currentTimeMillis();

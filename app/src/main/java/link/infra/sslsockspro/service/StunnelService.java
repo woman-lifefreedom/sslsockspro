@@ -58,6 +58,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -69,6 +70,7 @@ import java.util.TimerTask;
 import java.util.regex.Pattern;
 
 import link.infra.sslsockspro.BuildConfig;
+import link.infra.sslsockspro.database.CryptoManager;
 import link.infra.sslsockspro.database.ProfileDB;
 import link.infra.sslsockspro.R;
 import link.infra.sslsockspro.gui.activities.MainActivity;
@@ -159,7 +161,11 @@ public class StunnelService extends Service {
      */
     private void handleStart() {
         Context context = getApplicationContext();
-        setupConfigFile(context);
+        if (ProfileDB.getEncrypted()){
+            setupEncryptedConfigFile(context);
+        } else {
+            setupConfigFile(context);
+        }
         reloadStunnel();
         privateIsRunning.postValue(true);
         runningBool = true;
@@ -181,7 +187,11 @@ public class StunnelService extends Service {
             }
         };
         Timer timer = new Timer();
-        timer.schedule(task, STREAM_READER_DELAY);
+        if (!ProfileDB.getEncrypted()) {
+            timer.schedule(task, STREAM_READER_DELAY);
+        } else {
+            setupDummyConfig(context);
+        }
     }
 
     public void onDestroy() {
@@ -259,6 +269,27 @@ public class StunnelService extends Service {
      * @param context: Application context
      * @return true on success, false on failure
      */
+    static boolean setupEncryptedConfigFile(Context context) {
+        CryptoManager cm = new CryptoManager();
+        byte[] fileContentsByte;
+        try {
+        fileContentsByte = cm.decrypt(new FileInputStream(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + ProfileDB.getFile()));
+        String fileContents = new String(fileContentsByte);
+        File config = new File(context.getFilesDir().getAbsolutePath() + "/" + SERVICE_DIR + "/" + CONFIG);
+        BufferedSink out = Okio.buffer(Okio.sink(config));
+        String logConfig =
+                "debug = 5" + "\n" +
+                        "log = append" + "\n" +
+                        "output = " + context.getFilesDir().getPath() + "/" + APP_LOG + "\n";
+        out.writeUtf8(logConfig + fileContents);
+        out.close();
+        return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     static boolean setupConfigFile(Context context) {
         String profileName = ProfileDB.getFile();
         File profile = new File(context.getFilesDir().getAbsolutePath() + "/" + PROFILES_DIR + "/" + profileName);

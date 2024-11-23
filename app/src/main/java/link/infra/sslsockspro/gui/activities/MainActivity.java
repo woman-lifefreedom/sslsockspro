@@ -72,6 +72,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -87,7 +88,9 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
@@ -95,10 +98,13 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.stream.Stream;
 
+import link.infra.sslsockspro.database.CryptoManager;
 import link.infra.sslsockspro.database.FileOperation;
 import link.infra.sslsockspro.database.ProfileDB;
 import link.infra.sslsockspro.R;
+import link.infra.sslsockspro.database.SimpleCrypto;
 import link.infra.sslsockspro.gui.OpenVPNIntegrationHandler;
 import link.infra.sslsockspro.gui.fragments.KeyEditActivity;
 import link.infra.sslsockspro.gui.fragments.KeyFragment;
@@ -153,10 +159,10 @@ public class MainActivity extends AppCompatActivity
     private static boolean requestsDisabled = false;
     private static boolean autoConnectFlag = false;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (setupServiceDir(getApplicationContext())) {
-            //stunnelVersionStringPrivate.postValue(StunnelService.checkStunnelVersion(getApplicationContext()));
             stunnelVersionStringPrivate.postValue("5.67");
         }
         loadDatabase();
@@ -243,6 +249,13 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, AdvancedSettingsActivity.class);
             startActivity(intent);
+            return true;
+        }
+
+        if (id == R.id.action_sync) {
+            Intent intent = new Intent(this, ProfileEditActivity.class);
+            intent.putExtra(ARG_POSITION, NEW_PROFILE);
+            profileEditRequestLauncher.launch(intent);
             return true;
         }
 
@@ -630,6 +643,7 @@ public class MainActivity extends AppCompatActivity
 
     private void loadDatabase() {
         File db = new File(getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + PROFILE_DATABASE);
+        /* database should exist, only in older versions it does not exist */
         if (!db.exists()) {
             try {
                 ProfileDB.updateProfilesFromConfigFiles(getApplicationContext());

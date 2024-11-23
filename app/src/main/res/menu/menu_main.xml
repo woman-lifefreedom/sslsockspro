@@ -32,6 +32,12 @@
         android:icon="@drawable/ic_settings_black_24dp"
         app:showAsAction="ifRoom"/>
     <item
+        android:id="@+id/action_sync"
+        android:icon="@drawable/ic_sync"
+        android:title="@string/action_sync"
+        app:showAsAction="ifRoom"
+        />
+    <item
         android:id="@+id/action_import_profile"
         android:icon="@drawable/ic_resource_import"
         android:title="@string/action_import_profile"

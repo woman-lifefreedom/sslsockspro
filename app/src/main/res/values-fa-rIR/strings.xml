@@ -8,6 +8,7 @@
     <string name="action_profile_added">پروفایل جدید اضافه شد</string>
     <string name="action_profile_edited">تغییرات پروفایل ثبت شد</string>
     <string name="action_import_profile">اضافه کردن پروفایل از روی فایل</string>
+    <string name="action_sync">به‌روزرسانی پروفایل‌ها از طریق سرور</string>
     <string name="add_key_fab">اضافه کردن کلید</string>
     <string name="add_profile_fab">اضافه کردن پروفایل</string>
 
@@ -72,6 +73,9 @@
 
     <string name="pref_header_general">تنظیمات عمومی</string>
     <string name="pref_title_start_on_boot">اجرای خودکار</string>
+
+    <string name="pref_sync_google_drive">بارگذاری پروفایل‌ها از طریق گوگل‌درایو</string>
+    <string name="pref_desc_sync_google_drive">پروفایل‌ها به صورت خودکار از طریق لینک گوگل‌درایو بارگذاری خواهند شد</string>
 
     <string name="pref_header_about">درباره</string>
     <string name="pref_title_version">نسخه\u200cی نرم افزار</string>

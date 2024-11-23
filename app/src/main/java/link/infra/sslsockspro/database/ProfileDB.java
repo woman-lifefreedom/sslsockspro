@@ -31,24 +31,28 @@ import static link.infra.sslsockspro.Constants.PROFILE_DATABASE;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_ACCEPT;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_CLIENT;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_CONNECT;
+import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_ENC;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_OVPN_EMBEDDED;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_OVPN_PROFILE;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_OVPN_RUN;
 import static link.infra.sslsockspro.database.StunnelKeys.KEY_ST_REMARK;
 
 import android.content.Context;
+import android.os.Build;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -80,9 +84,6 @@ public class ProfileDB {
         String remark = "";
         String ovpnProfile = "";
         Boolean runOvpn = false;
-
-        public StunnelGlobalOptions() {
-        }
     }
 
     static class StunnelServiceOptions {
@@ -95,13 +96,13 @@ public class ProfileDB {
     }
 
     static class ProfileItem {
-        String profileName;
+        String profileName = "";
         StunnelGlobalOptions stunnelGlobalOptions;
         List<StunnelServiceOptions> stunnelServiceOptions = new ArrayList<>();
         Boolean embeddedOvpn = false;
-
-        public ProfileItem() {
-        }
+        Boolean encrypted = false;
+        /* serverUUID is for synchronization purposes only */
+        String serverUUID = "";
     }
 
     /**
@@ -155,7 +156,8 @@ public class ProfileDB {
     }
 
     /**
-     * with this method the database class and database file are updated from the existing config files
+     * This method is for backward compatibility, when on older versions there was no database.
+     * With this method the database class and database file are updated from the existing config files
      * @param context - application context
      * @throws IOException
      */
@@ -285,7 +287,6 @@ public class ProfileDB {
                 // TODO: bad config
             }
         }
-
         return true;
     }
 
@@ -323,6 +324,76 @@ public class ProfileDB {
         return true;
     }
 
+    public static boolean isEncrypted(String fileContents){
+        Matcher matcher = Pattern.compile("^"+KEY_ST_ENC).matcher(fileContents);
+        return matcher.find();
+    }
+
+    public static void addEncryptedProfile(String fileContents, Context context) throws Exception {
+        Matcher matcher = Pattern.compile("^"+KEY_ST_ENC+"v([\\d]{2})&remark=(.*)&serverUUID=(.*)&EOH(.*)",Pattern.DOTALL).matcher(fileContents);
+        String version = "";
+        String remark = "";
+        String serverUUID = "";
+        String profileEnc= "";
+        if (!matcher.find()) { return; }
+        version = matcher.group(1);
+        remark = matcher.group(2);
+        serverUUID = matcher.group(3);
+        profileEnc = matcher.group(4).trim();
+        byte[] profileByte = SimpleCrypto.decodeBase64(profileEnc);
+        byte[] profileDec = CryptoManager.Companion.decryptServerProfile(profileByte);
+        String profile = new String(profileDec, StandardCharsets.UTF_8);
+
+        newProfileItem = new ProfileItem();
+        newProfileItem.stunnelGlobalOptions = new StunnelGlobalOptions();
+        newProfileItem.encrypted = true;
+        newProfileItem.serverUUID = serverUUID;
+        newProfileItem.stunnelGlobalOptions.remark=remark;
+        /* remove commented lines */
+        profile = profile.replaceAll("(?m)^[\\s]*#.*","");
+        /* separating the embedded ovpn*/
+        String sslsocks= "";
+        String ovpn = "";
+        matcher = Pattern.compile("(.*)"+"<" + KEY_ST_OVPN_EMBEDDED + ">" + "(.+)" + "</" + KEY_ST_OVPN_EMBEDDED + ">",Pattern.DOTALL)
+                .matcher(profile);
+        if (!matcher.find()) { return; }
+        sslsocks = matcher.group(1).trim();
+        ovpn = matcher.group(2).trim();
+
+        // BufferedSink out;
+        String sslsocksName = UUID.randomUUID().toString() + EXT_CONF;
+        String ovpnName = sslsocksName.replaceAll(EXT_CONF,EXT_OVPN);
+        File sslsocksProfile = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + sslsocksName);
+        sslsocksProfile.createNewFile();
+        File ovpnProfile = new File(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + ovpnName);
+        ovpnProfile.createNewFile();
+        CryptoManager cm1 = new CryptoManager();
+        FileOutputStream fos2 = new FileOutputStream(ovpnProfile);
+        cm1.encrypt(ovpn.getBytes(),fos2);
+        FileOutputStream fos1 = new FileOutputStream(sslsocksProfile);
+        cm1.encrypt(sslsocks.getBytes(),fos1);
+
+//        CryptoManager cm3 = new CryptoManager();
+//        byte[] ovpn1;
+//        ovpn1 = cm3.decrypt(new FileInputStream(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + ovpnName));
+//        String ovpnstr = new String(ovpn1);
+//
+//        CryptoManager cm2 = new CryptoManager();
+//        byte[] ssl1;
+//        ssl1 = cm2.decrypt(new FileInputStream(context.getFilesDir().getPath() + "/" + PROFILES_DIR + "/" + sslsocksName));
+//        String ssl1str = new String(ssl1);
+
+        /* add the profile contents to the database */
+        newProfileItem.embeddedOvpn = true;
+        newProfileItem.stunnelGlobalOptions.runOvpn = true;
+        newProfileItem.profileName = sslsocksName;
+        StunnelServiceOptions so = new StunnelServiceOptions();
+        so.connectHost = "Synchronized";
+        newProfileItem.stunnelServiceOptions.add(so);
+        mProfileItems.add(newProfileItem);
+        saveProfilesToDatabase(context);
+    }
+
     /**
      * @return last selected file on the database
      */
@@ -356,6 +427,14 @@ public class ProfileDB {
 
     public static Boolean getEmbeddedOvpn() {
         return mProfileItems.get(position).embeddedOvpn;
+    }
+
+    public static Boolean getEncrypted(int position) {
+        return mProfileItems.get(position).encrypted;
+    }
+
+    public static Boolean getEncrypted() {
+        return mProfileItems.get(position).encrypted;
     }
 
     public static Boolean getRunOvpn() {

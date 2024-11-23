@@ -30,6 +30,8 @@
         <entry key="app/src/main/res/drawable/ic_service_running.xml" value="0.215" />
         <entry key="app/src/main/res/drawable/ic_settings_black_24dp.xml" value="0.2" />
         <entry key="app/src/main/res/drawable/ic_shortcut_foreground.xml" value="0.3445" />
+        <entry key="app/src/main/res/drawable/ic_sync.xml" value="0.2875" />
+        <entry key="app/src/main/res/drawable/ic_sync_svgrepo_com.xml" value="0.1855" />
         <entry key="app/src/main/res/drawable/ic_tunnel.xml" value="0.1965" />
         <entry key="app/src/main/res/drawable/ic_tunnel_black_24dp.xml" value="0.1965" />
         <entry key="app/src/main/res/drawable/ic_tunnel_white_24dp.xml" value="0.1965" />
@@ -59,7 +61,7 @@
         <entry key="app/src/main/res/layout/newlay.xml" value="0.2875905797101449" />
         <entry key="app/src/main/res/layout/profile_item.xml" value="0.23489583333333333" />
         <entry key="app/src/main/res/menu/menu_key_edit.xml" value="0.34270833333333334" />
-        <entry key="app/src/main/res/menu/menu_main.xml" value="0.34270833333333334" />
+        <entry key="app/src/main/res/menu/menu_main.xml" value="0.21" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.25" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.2025" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/ic_shortcut_round.xml" value="0.3445" />
@@ -75,7 +77,7 @@
     <option name="myDefaultNotNull" value="androidx.annotation.NonNull" />
     <option name="myNullables">
       <value>
-        <list size="15">
+        <list size="17">
           <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.Nullable" />
           <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nullable" />
           <item index="2" class="java.lang.String" itemvalue="javax.annotation.CheckForNull" />
@@ -91,12 +93,14 @@
           <item index="12" class="java.lang.String" itemvalue="org.eclipse.jdt.annotation.Nullable" />
           <item index="13" class="java.lang.String" itemvalue="io.reactivex.annotations.Nullable" />
           <item index="14" class="java.lang.String" itemvalue="io.reactivex.rxjava3.annotations.Nullable" />
+          <item index="15" class="java.lang.String" itemvalue="org.jspecify.annotations.Nullable" />
+          <item index="16" class="java.lang.String" itemvalue="jakarta.annotation.Nullable" />
         </list>
       </value>
     </option>
     <option name="myNotNulls">
       <value>
-        <list size="15">
+        <list size="17">
           <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
           <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nonnull" />
           <item index="2" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
@@ -112,11 +116,13 @@
           <item index="12" class="java.lang.String" itemvalue="io.reactivex.annotations.NonNull" />
           <item index="13" class="java.lang.String" itemvalue="io.reactivex.rxjava3.annotations.NonNull" />
           <item index="14" class="java.lang.String" itemvalue="lombok.NonNull" />
+          <item index="15" class="java.lang.String" itemvalue="org.jspecify.annotations.NonNull" />
+          <item index="16" class="java.lang.String" itemvalue="jakarta.annotation.Nonnull" />
         </list>
       </value>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

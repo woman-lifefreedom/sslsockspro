@@ -31,6 +31,7 @@ import static link.infra.sslsockspro.database.ProfileDB.NEW_PROFILE;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.util.Log;
@@ -87,6 +88,14 @@ public class ExternalProfileImportActivity extends AppCompatActivity {
                 String fileName = FileOperation.getFileName(fileData, getApplicationContext());
                 if ( !fileName.endsWith(EXT_CONF) ) {
                     Toast.makeText(this, R.string.profile_name_ext, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (ProfileDB.isEncrypted(fileContents)){
+                    try {
+                        ProfileDB.addEncryptedProfile(fileContents, getApplicationContext());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     return;
                 }
                 if (ProfileDB.parseProfile(fileContents)) {

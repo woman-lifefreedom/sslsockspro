@@ -30,6 +30,10 @@
             app:defaultValue="false"
             app:key="start_on_boot"
             app:title="@string/pref_title_start_on_boot" />
+        <EditTextPreference
+            app:key="sync_google_drive"
+            app:title="@string/pref_sync_google_drive" />
+            app:summary="@string/pref_desc_sync_google_drive"/>
     </PreferenceCategory>
 
     <PreferenceCategory
