@@ -8,12 +8,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-
 
    <application
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_descriptor"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -54,7 +55,15 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <service android:name="link.infra.sslsockspro.service.ServiceStopReceiver$OpenVPNIntentService" />
-        <service android:name="link.infra.sslsockspro.service.StunnelService" />
+        <service
+            android:name="link.infra.sslsockspro.service.StunnelService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Maintains a user-initiated local encrypted SOCKS/HTTP proxy using Stunnel" />
+        </service>
 
         <receiver
             android:name="link.infra.sslsockspro.service.BootReceiver"

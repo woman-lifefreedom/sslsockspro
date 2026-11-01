@@ -4,17 +4,17 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 plugins {
     //id("org.cadixdev.licenser") version "0.6.1"
     id("com.android.application")
-    id("kotlin-android")
+    //id("kotlin-android")
 }
 
 //apply(plugin = "com.android.application")
 
 android {
-    compileSdk = 34
+    compileSdk = 37
     defaultConfig {
         applicationId = "link.infra.sslsockspro"
         minSdk = 23
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 5
         versionName = "2.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -99,8 +99,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    ndkVersion = "25.1.8937393"
-    buildToolsVersion = "34.0.0"
+    ndkVersion = "30.0.16248370"
+    //buildToolsVersion = "34.0.0"
     namespace = "link.infra.sslsockspro"
 
 }
@@ -145,24 +145,23 @@ repositories {
 
 dependencies {
     //implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.2")
+    implementation("androidx.appcompat:appcompat:1.8.0")
+    implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.cardview:cardview:1.0.0")
-    implementation("com.google.android.material:material:1.12.0")
+    implementation("com.google.android.material:material:1.14.0")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.vectordrawable:vectordrawable:1.2.0")
-    implementation("com.squareup.okio:okio:2.9.0")
+    implementation("com.squareup.okio:okio:3.18.2")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
     implementation("com.android.support:multidex:1.0.3")
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation(group = "commons-io", name = "commons-io", version = "2.6")
+    implementation("com.google.code.gson:gson:2.15.0")
+    implementation("commons-io:commons-io:2.22.0")
 
     // For Google Drive Rest API
     // Guava
-    implementation("com.google.guava:guava:32.0.1-jre")
+    implementation("com.google.guava:guava:33.7.2-jre")
     // Guava fix
     implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
     //Drive

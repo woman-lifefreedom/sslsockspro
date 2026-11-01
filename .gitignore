@@ -85,3 +85,5 @@ lib*.so
 
 # Built files
 app/release
+
+.kotlin

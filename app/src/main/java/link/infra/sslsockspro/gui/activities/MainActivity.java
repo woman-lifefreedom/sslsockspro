@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (setupServiceDir(getApplicationContext())) {
-            stunnelVersionStringPrivate.postValue("5.67");
+            stunnelVersionStringPrivate.postValue("5.82");
         }
         loadDatabase();
 

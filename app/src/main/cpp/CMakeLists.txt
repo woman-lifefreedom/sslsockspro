@@ -18,6 +18,7 @@ include(openssl/openssl.cmake)
 set(stunnel_srcs
     ${CMAKE_CURRENT_SOURCE_DIR}/stunnel/src/client.c
     ${CMAKE_CURRENT_SOURCE_DIR}/stunnel/src/cron.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/stunnel/src/ocsp.c
     ${CMAKE_CURRENT_SOURCE_DIR}/stunnel/src/ctx.c
     ${CMAKE_CURRENT_SOURCE_DIR}/stunnel/src/dhparam.c
     ${CMAKE_CURRENT_SOURCE_DIR}/stunnel/src/env.c
