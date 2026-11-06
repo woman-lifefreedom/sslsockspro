@@ -45,6 +45,9 @@ set(stunnel_srcs_extra
 )
 
 add_library(stunnel SHARED ${stunnel_srcs} ${stunnel_srcs_extra})
+target_link_options(stunnel PRIVATE
+        "-Wl,-z,max-page-size=16384"
+)
 
 target_include_directories(stunnel PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/stunnel/src
